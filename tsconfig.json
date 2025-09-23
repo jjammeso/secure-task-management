@@ -1,38 +1,38 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
+  "files": [],
+  "references": [
+    { "path": "./apps/api" },
+    { "path": "./libs/data" }
+  ],
   "compilerOptions": {
-    // File Layout
-    // "rootDir": "./src",
-    // "outDir": "./dist",
+    // Paths
+    "baseUrl": ".",
+    "paths": {
+      "@myorg/data": ["libs/data/src/index.ts"]
+    },
 
-    // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "allowImportingTsExtensions": true,
-    // "types": [],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // and npm install -D @types/node
+    // Core
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
 
-    // Other Outputs
-    "sourceMap": true,
+    // Outputs
     "declaration": true,
     "declarationMap": true,
-    
-
-    // Stricter Typechecking Options
-    // Style Options
-    // "noImplicitReturns": true,
-    // "noImplicitOverride": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
-    // "noFallthroughCasesInSwitch": true,
-    // "noPropertyAccessFromIndexSignature": true,
-
-    // Recommended Options
-    "strict": true,
-    "jsx": "react-jsx",
-    "moduleDetection": "force",
+    "sourceMap": true,
     "skipLibCheck": true,
+
+    // Strictness
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // Decorators (for Nest/TypeORM/Express metadata)
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    // Node types
+    "types": ["node"]
   }
 }
