@@ -19,8 +19,8 @@ export class Organization {
     @OneToMany(() => Organization, org => org.parent)
     children!: Organization[];
 
-    @Column()
-    ownderId!: string;
+    @Column({ nullable: true })
+    ownerId!: string;
 
     @OneToMany(() => User, user => user.organization)
     users!: User[];
@@ -33,5 +33,4 @@ export class Organization {
 
     @UpdateDateColumn()
     updatedAt!: Date;
-
 }
