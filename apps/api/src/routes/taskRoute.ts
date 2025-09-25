@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 
         const userRepository = AppDataSource.getRepository(User);
        
-        const user = userRepository.find();
+        const user = await userRepository.find();
 
         res.json({ success: true, User: user });
     } catch (error) {
