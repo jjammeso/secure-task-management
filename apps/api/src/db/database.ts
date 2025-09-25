@@ -15,58 +15,108 @@ export const AppDataSource = new DataSource({
 
 //Populate database with organization and some users
 
-const orgNames = ['Org Alpha', 'Org Beta', 'Org Gamma'];
+const orgStructure = [
+    // Parent organizations (Level 1)
+    { name: 'Engineering', isParent: true },
+    { name: 'Operation', isParent: true },
+
+    // Child organizations (Level 2)
+    { name: 'Software', parentName: 'Engineering' },
+    { name: 'Electronic', parentName: 'Engineering' },
+    { name: 'Production', parentName: 'Operation' },
+    { name: 'Safety', parentName: 'Operation' }
+];
 
 const usersData = [
-    // Owners (one per org)
-    { firstName: 'Alice', lastName: 'Smith', email: 'alice@alpha.com', role: Role.OWNER, orgIndex: 0 },
-    { firstName: 'Bob', lastName: 'Johnson', email: 'bob@beta.com', role: Role.OWNER, orgIndex: 1 },
-    { firstName: 'Carol', lastName: 'Williams', email: 'carol@gamma.com', role: Role.OWNER, orgIndex: 2 },
+    // Owners for parent organizations
+    { firstName: 'Alice', lastName: 'Smith', email: 'alice@alpha.com', role: Role.OWNER, orgName: 'Engineering' },
+    { firstName: 'Bob', lastName: 'Johnson', email: 'bob@beta.com', role: Role.OWNER, orgName: 'Operation' },
 
-    // Admins
-    { firstName: 'Dave', lastName: 'Brown', email: 'dave@alpha.com', role: Role.ADMIN, orgIndex: 0 },
-    { firstName: 'Eve', lastName: 'Jones', email: 'eve@beta.com', role: Role.ADMIN, orgIndex: 1 },
-    { firstName: 'Frank', lastName: 'Garcia', email: 'frank@gamma.com', role: Role.ADMIN, orgIndex: 2 },
+    // Admins for child organizations
+    { firstName: 'Carol', lastName: 'Williams', email: 'carol@alpha-north.com', role: Role.ADMIN, orgName: 'Software' },
+    { firstName: 'Dave', lastName: 'Brown', email: 'dave@alpha-south.com', role: Role.ADMIN, orgName: 'Electronic' },
+    { firstName: 'Eve', lastName: 'Jones', email: 'eve@beta-mfg.com', role: Role.ADMIN, orgName: 'Production' },
 
-    // Viewers
-    { firstName: 'Grace', lastName: 'Miller', email: 'grace@alpha.com', role: Role.VIEWER, orgIndex: 0 },
-    { firstName: 'Heidi', lastName: 'Davis', email: 'heidi@beta.com', role: Role.VIEWER, orgIndex: 1 },
-    { firstName: 'Ivan', lastName: 'Rodriguez', email: 'ivan@gamma.com', role: Role.VIEWER, orgIndex: 2 },
-    { firstName: 'Judy', lastName: 'Martinez', email: 'judy@alpha.com', role: Role.VIEWER, orgIndex: 0 },
+    // Additional users across organizations
+    { firstName: 'Frank', lastName: 'Garcia', email: 'frank@alpha.com', role: Role.ADMIN, orgName: 'Engineering' },
+    { firstName: 'Grace', lastName: 'Miller', email: 'grace@alpha-north.com', role: Role.VIEWER, orgName: 'Software' },
+    { firstName: 'Henry', lastName: 'Davis', email: 'henry@alpha-south.com', role: Role.VIEWER, orgName: 'Safety' },
+    { firstName: 'Iris', lastName: 'Rodriguez', email: 'iris@beta.com', role: Role.VIEWER, orgName: 'Operation' },
+    { firstName: 'Jack', lastName: 'Martinez', email: 'jack@beta-mfg.com', role: Role.VIEWER, orgName: 'Safety' },
 ];
 
 export async function seed() {
     const orgRepo = AppDataSource.getRepository(Organization);
     const userRepo = AppDataSource.getRepository(User);
 
-    //Load Json data
-    const orgs: Organization[] = [];
+    // Check if tables are empty - corrected syntax
+    const orgCount = await orgRepo.count();
+    const userCount = await userRepo.count();
 
-    for (const name of orgNames) {
-        const org = orgRepo.create({ name });
-        await orgRepo.save(org);
-        orgs.push(org);
+    if (orgCount > 0 || userCount > 0) {
+        console.log('📋 Tables already contain data, skipping seed');
+        return;
     }
 
+    console.log('🌱 Tables are empty, starting seed...');
+
+    const orgs: { [key: string]: Organization } = {};
+
+    //Load Json data
+    for (const orgData of orgStructure.filter(o => o.isParent)) {
+        const org = orgRepo.create({
+            name: orgData.name,
+        });
+        const savedOrg = await orgRepo.save(org);
+        orgs[orgData.name] = savedOrg;
+        console.log(`  ✓ Created parent org: ${orgData.name}`);
+    }
+
+    // Step 2: Create child organizations
+    console.log('📊 Creating child organizations...');
+    for (const orgData of orgStructure.filter(o => !o.isParent)) {
+        const parentOrg = orgs[orgData.parentName!];
+        if (!parentOrg) {
+            throw new Error(`Parent organization not found: ${orgData.parentName}`);
+        }
+
+        const org = orgRepo.create({
+            name: orgData.name,
+            parentId: parentOrg.id,
+            parent: parentOrg
+        });
+        const savedOrg = await orgRepo.save(org);
+        orgs[orgData.name] = savedOrg;
+        console.log(`  ✓ Created child org: ${orgData.name} (parent: ${orgData.parentName})`);
+    }
+
+    // Step 3: Create users
+    console.log('👥 Creating users...');
     for (const u of usersData) {
+        const targetOrg = orgs[u.orgName];
+        if (!targetOrg) {
+            throw new Error(`Organization not found: ${u.orgName}`);
+        }
+
         const user = userRepo.create({
             firstName: u.firstName,
             lastName: u.lastName,
             email: u.email,
             role: u.role,
-            organization: orgs[u.orgIndex],
-            organizationId: orgs[u.orgIndex].id,
+            organization: targetOrg,
+            organizationId: targetOrg.id,
             password: await bcrypt.hash(`${u.firstName}123`, 10),
-        })
+        });
 
-        await userRepo.save(user);
+        const savedUser = await userRepo.save(user);
+        console.log(`  ✓ Created user: ${u.firstName} ${u.lastName} (${u.role}) in ${u.orgName}`);
 
+        // Step 4: Set organization owner
         if (u.role === Role.OWNER) {
-            const org = orgs[u.orgIndex];
-            org.ownerId = user.id;
-            await orgRepo.save(org);
+            targetOrg.ownerId = savedUser.id;
+            await orgRepo.save(targetOrg);
+            console.log(`    ➤ Set ${u.firstName} as owner of ${u.orgName}`);
         }
     }
 
-    console.log('Data seeded with 3 organizations and 10 users');
 }
