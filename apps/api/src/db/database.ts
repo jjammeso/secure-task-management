@@ -29,20 +29,20 @@ const orgStructure = [
 
 const usersData = [
     // Owners for parent organizations
-    { firstName: 'Alice', lastName: 'Smith', email: 'alice@alpha.com', role: Role.OWNER, orgName: 'Engineering' },
-    { firstName: 'Bob', lastName: 'Johnson', email: 'bob@beta.com', role: Role.OWNER, orgName: 'Operation' },
+    { firstName: 'Alice', lastName: 'Smith', email: 'alice@email.com', role: Role.OWNER, orgName: 'Engineering' },
+    { firstName: 'Bob', lastName: 'Johnson', email: 'bob@email.com', role: Role.OWNER, orgName: 'Operation' },
 
     // Admins for child organizations
-    { firstName: 'Carol', lastName: 'Williams', email: 'carol@alpha-north.com', role: Role.ADMIN, orgName: 'Software' },
-    { firstName: 'Dave', lastName: 'Brown', email: 'dave@alpha-south.com', role: Role.ADMIN, orgName: 'Electronic' },
-    { firstName: 'Eve', lastName: 'Jones', email: 'eve@beta-mfg.com', role: Role.ADMIN, orgName: 'Production' },
+    { firstName: 'Carol', lastName: 'Williams', email: 'carol@email.com', role: Role.ADMIN, orgName: 'Software' },
+    { firstName: 'Dave', lastName: 'Brown', email: 'dave@email.com', role: Role.ADMIN, orgName: 'Electronic' },
+    { firstName: 'Eve', lastName: 'Jones', email: 'eve@email.com', role: Role.ADMIN, orgName: 'Production' },
 
     // Additional users across organizations
-    { firstName: 'Frank', lastName: 'Garcia', email: 'frank@alpha.com', role: Role.ADMIN, orgName: 'Engineering' },
-    { firstName: 'Grace', lastName: 'Miller', email: 'grace@alpha-north.com', role: Role.VIEWER, orgName: 'Software' },
-    { firstName: 'Henry', lastName: 'Davis', email: 'henry@alpha-south.com', role: Role.VIEWER, orgName: 'Safety' },
-    { firstName: 'Iris', lastName: 'Rodriguez', email: 'iris@beta.com', role: Role.VIEWER, orgName: 'Operation' },
-    { firstName: 'Jack', lastName: 'Martinez', email: 'jack@beta-mfg.com', role: Role.VIEWER, orgName: 'Safety' },
+    { firstName: 'Frank', lastName: 'Garcia', email: 'frank@email.com', role: Role.ADMIN, orgName: 'Engineering' },
+    { firstName: 'Grace', lastName: 'Miller', email: 'grace@email.com', role: Role.VIEWER, orgName: 'Software' },
+    { firstName: 'Henry', lastName: 'Davis', email: 'henry@email.com', role: Role.VIEWER, orgName: 'Safety' },
+    { firstName: 'Iris', lastName: 'Rodriguez', email: 'iris@email.com', role: Role.VIEWER, orgName: 'Operation' },
+    { firstName: 'Jack', lastName: 'Martinez', email: 'jack@email.com', role: Role.VIEWER, orgName: 'Safety' },
 ];
 
 export async function seed() {
