@@ -15,11 +15,11 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password }: LoginDto = req.body;
 
-        if (!email) res.status(400).json({
+        if (!email) return res.status(400).json({
             success: false,
             error: "Email is required"
         })
-        if (!password) res.status(400).json({
+        if (!password) return res.status(400).json({
             success: false,
             error: "No password is provided"
         })
@@ -62,7 +62,7 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1d' }
         )
 
-        res.json({
+        return res.json({
             success: true,
             token,
             user: {
@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
         })
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             error: 'Login failed'
         });
