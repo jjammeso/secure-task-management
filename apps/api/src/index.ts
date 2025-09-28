@@ -2,9 +2,10 @@ import app from "./app";
 import { AppDataSource } from "./db/database";
 import { seed } from "./db/database";
 import dotenv from 'dotenv';
+import path from 'path'
 
 //Load environment variables
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') }); 
 
 const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';

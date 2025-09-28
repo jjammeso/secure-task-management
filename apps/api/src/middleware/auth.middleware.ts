@@ -1,10 +1,11 @@
+import { Role } from "@myorg/data";
 import { error } from "console";
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
-
+import {Permission, rbacService} from '@myorg/auth';
 
 interface AuthenticatedRequest extends Request {
-    user?: JwtPayload | string;
+    user?: JwtPayload
 }
 
 export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -29,10 +30,24 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
     };
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
         req.user = decoded;
+        console.log("here is decoded", decoded);
         next();
     } catch (error) {
         return res.status(403).json({success:false, error: "Invalid or expired token"});
+    }
+}
+
+export const requirePermission = (permission:Permission)=>{
+    return (req: AuthenticatedRequest, res:Response, next:NextFunction)=>{
+        if(!req.user){
+            return res.status(401).json({
+                success:false,
+                error:'Not authenticated'
+            });
+        }
+
+        if(!rbacService.hasPermission(req.user, permission))
     }
 }
