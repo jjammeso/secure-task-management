@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Permission, rbacService } from '@myorg/auth';
 
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
     user?: JwtPayload
 }
 

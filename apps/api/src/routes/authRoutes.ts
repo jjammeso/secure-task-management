@@ -1,9 +1,10 @@
-import { LoginDto } from "@myorg/data";
-import { Router } from "express";
+import { AuthResponse, LoginDto } from "@myorg/data";
+import { Response, Router } from "express";
 import { AppDataSource } from "../db/database";
 import { User } from "../entities";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { AuthenticatedRequest, authenticateJWT } from "../middleware/auth.middleware";
 
 const router = Router();
 
