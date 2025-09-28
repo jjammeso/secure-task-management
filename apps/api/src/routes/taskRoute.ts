@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AppDataSource } from "../db/database";
 import { Organization, Task, User } from "../entities";
 import { TaskStatus, TaskCategory, Role, CreateTaskDto } from '@myorg/data';
+import { authenticateJWT } from "../middleware/auth.middleware";
 
 const router = Router()
 
@@ -62,7 +63,7 @@ router.post('/', async (req, res) => {
 })
 
 //List accessible tasks
-router.get('/', async (req, res) => {
+router.get('/', authenticateJWT, async (req, res) => {
     try {
 
         const userRepository = AppDataSource.getRepository(User);

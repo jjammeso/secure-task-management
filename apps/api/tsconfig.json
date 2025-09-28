@@ -8,6 +8,7 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
   "references": [
-    { "path": "../../libs/data" }
+    { "path": "../../libs/data" },
+    {"path": "../../libs/auth"}
   ]
 }

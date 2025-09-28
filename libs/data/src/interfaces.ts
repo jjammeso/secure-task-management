@@ -36,13 +36,6 @@ export interface Task {
   updatedAt: Date;
 }
 
-export interface Permission {
-  id: string;
-  resource: string; // 'task', 'user', 'organization'
-  action: string;   // 'create', 'read', 'update', 'delete'
-  role: Role;
-}
-
 export interface AuditLog {
   id: string;
   userId: string;

@@ -3,10 +3,7 @@ import { Router } from "express";
 import { AppDataSource } from "../db/database";
 import { User } from "../entities";
 import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-
-dotenv.config();
 
 const router = Router();
 
