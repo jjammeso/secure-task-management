@@ -31,12 +31,10 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
 };
 
 export class RBACService{
-    hasPermission(user:User, permission:Permission):boolean {
-        const rolePermissions = ROLE_PERMISSIONS[user.role];
+    hasPermission(role:Role, permission:Permission):boolean {
+        const rolePermissions = ROLE_PERMISSIONS[role];
         return rolePermissions.includes(permission);
     }
-
-    
 }
 
 

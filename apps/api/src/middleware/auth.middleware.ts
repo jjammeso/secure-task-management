@@ -2,7 +2,7 @@ import { Role } from "@myorg/data";
 import { error } from "console";
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import {Permission, rbacService} from '@myorg/auth';
+import { Permission, rbacService } from '@myorg/auth';
 
 interface AuthenticatedRequest extends Request {
     user?: JwtPayload
@@ -35,19 +35,25 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
         console.log("here is decoded", decoded);
         next();
     } catch (error) {
-        return res.status(403).json({success:false, error: "Invalid or expired token"});
+        return res.status(403).json({ success: false, error: "Invalid or expired token" });
     }
 }
 
-export const requirePermission = (permission:Permission)=>{
-    return (req: AuthenticatedRequest, res:Response, next:NextFunction)=>{
-        if(!req.user){
+export const requirePermission = (permission: Permission) => {
+    return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        if (!req.user) {
             return res.status(401).json({
-                success:false,
-                error:'Not authenticated'
+                success: false,
+                error: 'Not authenticated'
             });
         }
 
-        if(!rbacService.hasPermission(req.user, permission))
+        if (!rbacService.hasPermission(req.user.role, permission)) {
+            return res.status(403).json({
+                success: false,
+                error: "Insufficient permissioin"
+            })
+        }
+        next();
     }
 }
