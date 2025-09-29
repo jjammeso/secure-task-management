@@ -36,26 +36,49 @@ export class RBACService {
         return rolePermissions.includes(permission);
     }
 
-    canAccessOrganization(userOrgId: string, targetOrgId: string, orgHierarchy: Organization[]) {
+    canAccessOrganization(userOrgId: string, targetOrgId: string, allOrgs: Organization[]):boolean {
         if (userOrgId === targetOrgId) return true;
 
-        return this.isChildOrganization(userOrgId, targetOrgId, orgHierarchy);
+        return this.isChildOrganization(userOrgId, targetOrgId, allOrgs);
     }
 
-    private isChildOrganization(userOrgId: string, targetOrgId: string, orgHierarchy: Organization[]) {
-        const childOrgs = orgHierarchy.filter(org => org.parentId === userOrgId).map(org => org.id);
+    private isChildOrganization(userOrgId: string, targetOrgId: string, allOrgs: Organization[]) {
+        const childOrgs = allOrgs.filter(org => org.parentId === userOrgId).map(org => org.id);
 
         if(childOrgs.length<= 0) return false;
         if(childOrgs.includes(targetOrgId)) return true;
 
         for(const childId of childOrgs){
-            if(this.isChildOrganization(childId, targetOrgId, orgHierarchy)){
+            if(this.isChildOrganization(childId, targetOrgId, allOrgs)){
                 return true;
             }
         }
 
         return false;
     }
+
+    getAccessibleOrganizationIds(role:Role, userOrgId:string, allOrgs:Organization[]):string[]{
+
+        const accessibleIds = new Set<string>();
+
+        accessibleIds.add(userOrgId);
+
+        if(role === Role.OWNER || role === Role.ADMIN){
+            this.addChildOrganizations(userOrgId, allOrgs, accessibleIds);
+        }
+        
+        return Array.from(accessibleIds);
+    }
+
+    private addChildOrganizations(parentId:string, allOrgs:Organization[], accessibleIds:Set<string>):void{
+        const children = allOrgs.filter(orgs => orgs.parentId === parentId);
+
+        for(const child of children){
+            accessibleIds.add(child.id);
+            this.addChildOrganizations(child.id, allOrgs, accessibleIds);
+        }
+    }
+
 }
 
 

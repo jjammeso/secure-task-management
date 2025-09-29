@@ -83,17 +83,54 @@ taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), async (req: Auth
 })
 
 //List accessible tasks
-taskRoutes.get('/', authenticateJWT, async (req, res) => {
+taskRoutes.get('/', async (req: AuthenticatedRequest, res: Response) => {
     try {
+        const userOrgId = req.user!.organizationId;
+        const query = req.query;
 
-        const userRepository = AppDataSource.getRepository(User);
+        const page = parseInt(query.page as string) || 1;
+        const limit = Math.min(parseInt(query.limit as string) || 50, 100);
+        const skip = (page - 1) * limit;
 
-        const user = await userRepository.find();
+        const taskRepo = AppDataSource.getRepository(Task);
+        const orgRepo = AppDataSource.getRepository(Organization);
 
-        res.json({ success: true, User: user });
+        const allOrgs = await orgRepo.find();
+        const accessibleOrgIds = rbacService.getAccessibleOrganizationIds(req.user!.role, userOrgId, allOrgs);
+
+        console.log("access org id", accessibleOrgIds);
+
+        const queryBuilder = taskRepo.createQueryBuilder('task')
+            .leftJoinAndSelect('task.createdBy', 'createdBy')
+            .leftJoinAndSelect('task.assignedTo', 'assignedTo')
+            .leftJoinAndSelect('task.organization', 'organization')
+            .where('task.organizationId IN (:...orgIds)', { orgIds: accessibleOrgIds });
+
+        if (query.status) {
+            queryBuilder.andWhere('task.status = :status', { status: query.status });
+        }
+
+        if (query.category) {
+            queryBuilder.andWhere('task.category = :category', { category: query.category });
+        }
+
+        if (query.assignedToId) {
+            queryBuilder.andWhere('task.assignedToId = :assignedToId', { assignedToId: query.assignedToId });
+        }
+
+        const sortBy = query.sortBy || 'createdAt';
+        const sortOrder = query.sortOrder as string || 'desc';
+
+        queryBuilder.orderBy(`task.${sortBy}`, sortOrder.toUpperCase() as 'ASC' | 'DESC');
+
+        const total = await queryBuilder.getCount();
+
+        const tasks = await queryBuilder.skip(skip).take(limit).getMany();
+
+        res.json({ success: true, data: { tasks, total, page, limit } });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, error: "DB test failed" });
+        console.error('List tasks error', error);
+        res.status(500).json({ success: false, error: "Internal Server error" });
     }
 })
 
