@@ -142,7 +142,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
 
         const taskRepo = AppDataSource.getRepository(Task);
 
-        const task = await taskRepo.findOne({ where: { id }, relations: ['createdBy', 'assignedTo', 'Organization'] });
+        const task = await taskRepo.findOne({ where: { id }, relations: ['createdBy', 'assignedTo', 'organization'] });
 
         if (!task) return res.status(404).json({
             success: false,
@@ -152,12 +152,16 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
         const updateData: UpdateTaskDto = req.body;
         const user = req.user;
 
+
         const orgRepo = AppDataSource.getRepository(Organization);
         const userRepo = AppDataSource.getRepository(User);
 
         const allOrgs = await orgRepo.find();
 
-        if (!rbacService.canAccessOrganization(user?.OrganizatioinId, task.organizationId, allOrgs)) {
+        console.log('here is user', user?.organizationId, task.organizationId);
+
+
+        if (!rbacService.canAccessOrganization(user?.organizationId, task.organizationId, allOrgs)) {
             return res.status(403).json({
                 success: false,
                 error: "Access denied"
@@ -188,7 +192,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
         });
 
         Object.assign(task, {
-            ...updateData, dueDate: updateData.dueDate? new Date(updateData.dueDate) : task.dueDate
+            ...updateData, dueDate: updateData.dueDate ? new Date(updateData.dueDate) : task.dueDate
         });
 
         const updatedTask = await taskRepo.save(task);
