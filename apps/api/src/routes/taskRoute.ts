@@ -83,7 +83,7 @@ taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), async (req: Auth
 })
 
 //List accessible tasks
-taskRoutes.get('/', async (req: AuthenticatedRequest, res: Response) => {
+taskRoutes.get('/', requirePermission(Permission.READ_TASK), async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userOrgId = req.user!.organizationId;
         const query = req.query;
@@ -175,11 +175,11 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
                 return res.status(403).json({ success: false, error: "Assigned user is outside your organization" });
             }
         }
+        const changes: Record<string, any> = {};
 
-        const changes:Record<string, any> = {};
+        Object.keys(updateData).forEach((key) => {
+            if (updateData[key as keyof UpdateTaskDto] !== undefined && updateData[key as keyof UpdateTaskDto] !== (task as any)[key]) {
 
-        Object.keys(updateData).forEach((key) =>{
-            if(updateData[key as keyof UpdateTaskDto] !== undefined && updateData[key as keyof UpdateTaskDto] !== (task as any)[key]){
                 changes[key] = {
                     from: (task as any)[key],
                     to: updateData[key as keyof UpdateTaskDto]
@@ -194,7 +194,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
         const updatedTask = await taskRepo.save(task);
 
         const taskWithRelation = await taskRepo.findOne({
-            where:{ id:updatedTask.id},
+            where: { id: updatedTask.id },
             relations: ['createdBy', 'assignedTo', 'organization']
         });
 
@@ -204,14 +204,45 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
     } catch (error) {
         console.error('Update task error', error);
         res.status(500).json({
-            success:false, error:"Internal server error"
+            success: false, error: "Internal server error"
         })
     }
 })
 
 //Delete tasks
-taskRoutes.delete('/:id', (req, res) => {
-    res.json({ messge: "delete task" })
+taskRoutes.delete('/:id', requirePermission(Permission.DELETE_TASK), async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const { id } = req.params;
+        const user = req.user;
+
+        const taskRepo = AppDataSource.getRepository(Task);
+        const task = await taskRepo.findOne({ where: { id } });
+
+        if (!task) return res.status(404).json({ success: false, error: "Task not found" });
+
+        const orgRepo = AppDataSource.getRepository(Organization);
+        const allOrgs = await orgRepo.find();
+
+        if (!rbacService.canAccessOrganization(user?.organizationId, task.organizationId, allOrgs))
+            return res.status(403).json({
+                success: false,
+                error: "Cannot delete task outside your organization"
+            });
+
+        await taskRepo.remove(task);
+
+        return res.json({
+            success: true,
+            message: 'Task deleted successfully'
+        });
+
+    } catch (error) {
+        console.error('Delete task error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
 })
 
 
