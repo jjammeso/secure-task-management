@@ -1,7 +1,7 @@
 import { Response, Router } from "express";
 import { AppDataSource } from "../db/database";
 import { Organization, Task, User } from "../entities";
-import { TaskStatus, TaskCategory, Role, CreateTaskDto } from '@myorg/data';
+import { TaskStatus, TaskCategory, Role, CreateTaskDto, UpdateTaskDto } from '@myorg/data';
 import { AuthenticatedRequest, authenticateJWT, requirePermission } from "../middleware/auth.middleware";
 import { Permission, rbacService } from "@myorg/auth";
 
@@ -135,8 +135,78 @@ taskRoutes.get('/', async (req: AuthenticatedRequest, res: Response) => {
 })
 
 //Edit tasks
-taskRoutes.put('/:id', (req, res) => {
-    res.json({ message: "edit task" })
+taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: AuthenticatedRequest, res: Response) => {
+    try {
+
+        const { id } = req.params;
+
+        const taskRepo = AppDataSource.getRepository(Task);
+
+        const task = await taskRepo.findOne({ where: { id }, relations: ['createdBy', 'assignedTo', 'Organization'] });
+
+        if (!task) return res.status(404).json({
+            success: false,
+            errror: "Task not found"
+        });
+
+        const updateData: UpdateTaskDto = req.body;
+        const user = req.user;
+
+        const orgRepo = AppDataSource.getRepository(Organization);
+        const userRepo = AppDataSource.getRepository(User);
+
+        const allOrgs = await orgRepo.find();
+
+        if (!rbacService.canAccessOrganization(user?.OrganizatioinId, task.organizationId, allOrgs)) {
+            return res.status(403).json({
+                success: false,
+                error: "Access denied"
+            });
+        }
+
+        if (updateData.assignedToId && updateData.assignedToId !== task.assignedToId) {
+            const assignedUser = await userRepo.findOne({ where: { id: updateData.assignedToId } });
+
+            if (!assignedUser) {
+                return res.status(400).json({ success: false, error: "Assigned User not found" })
+            }
+
+            if (!rbacService.canAccessOrganization(user?.organizationId, assignedUser.organizationId, allOrgs)) {
+                return res.status(403).json({ success: false, error: "Assigned user is outside your organization" });
+            }
+        }
+
+        const changes:Record<string, any> = {};
+
+        Object.keys(updateData).forEach((key) =>{
+            if(updateData[key as keyof UpdateTaskDto] !== undefined && updateData[key as keyof UpdateTaskDto] !== (task as any)[key]){
+                changes[key] = {
+                    from: (task as any)[key],
+                    to: updateData[key as keyof UpdateTaskDto]
+                };
+            }
+        });
+
+        Object.assign(task, {
+            ...updateData, dueDate: updateData.dueDate? new Date(updateData.dueDate) : task.dueDate
+        });
+
+        const updatedTask = await taskRepo.save(task);
+
+        const taskWithRelation = await taskRepo.findOne({
+            where:{ id:updatedTask.id},
+            relations: ['createdBy', 'assignedTo', 'organization']
+        });
+
+        return res.status(200).json({
+            success: true, data: taskWithRelation
+        });
+    } catch (error) {
+        console.error('Update task error', error);
+        res.status(500).json({
+            success:false, error:"Internal server error"
+        })
+    }
 })
 
 //Delete tasks
