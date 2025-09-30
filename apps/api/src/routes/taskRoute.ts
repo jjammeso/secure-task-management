@@ -175,11 +175,11 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
                 return res.status(403).json({ success: false, error: "Assigned user is outside your organization" });
             }
         }
-
         const changes: Record<string, any> = {};
 
         Object.keys(updateData).forEach((key) => {
             if (updateData[key as keyof UpdateTaskDto] !== undefined && updateData[key as keyof UpdateTaskDto] !== (task as any)[key]) {
+
                 changes[key] = {
                     from: (task as any)[key],
                     to: updateData[key as keyof UpdateTaskDto]
@@ -188,7 +188,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
         });
 
         Object.assign(task, {
-            ...updateData, dueDate: updateData.dueDate ? new Date(updateData.dueDate) : task.dueDate
+            ...updateData, dueDate: updateData.dueDate? new Date(updateData.dueDate) : task.dueDate
         });
 
         const updatedTask = await taskRepo.save(task);
