@@ -153,6 +153,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Pe
         const updateData: UpdateTaskDto = req.body;
         const user = req.user;
 
+
         const orgRepo = AppDataSource.getRepository(Organization);
         const userRepo = AppDataSource.getRepository(User);
 
@@ -189,7 +190,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Pe
         });
 
         Object.assign(task, {
-            ...updateData, dueDate: updateData.dueDate? new Date(updateData.dueDate) : task.dueDate
+            ...updateData, dueDate: updateData.dueDate ? new Date(updateData.dueDate) : task.dueDate
         });
 
         const updatedTask = await taskRepo.save(task);

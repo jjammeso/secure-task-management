@@ -8,7 +8,6 @@ export const auditLogger = (action: Permission, resource: string) => {
     return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         const orginalSend = res.send;
 
-
         res.send = function (data) {
             if (res.statusCode < 400 && req.user) {
                 const auditRepository = AppDataSource.getRepository(AuditLog);
