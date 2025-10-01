@@ -1,15 +1,16 @@
 import { Response, Router } from "express";
 import { AppDataSource } from "../db/database";
 import { Organization, Task, User } from "../entities";
-import { TaskStatus, TaskCategory, Role, CreateTaskDto, UpdateTaskDto } from '@myorg/data';
+import { TaskStatus, Role, CreateTaskDto, UpdateTaskDto } from '@myorg/data';
 import { AuthenticatedRequest, authenticateJWT, requirePermission } from "../middleware/auth.middleware";
 import { Permission, rbacService } from "@myorg/auth";
+import { auditLogger } from "../middleware/audit.middleware";
 
 const taskRoutes = Router()
 taskRoutes.use(authenticateJWT);
 
 //Create task
-taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), async (req: AuthenticatedRequest, res: Response) => {
+taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Permission.CREATE_TASK, "Task") , async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { title, description, category, priority, dueDate, assignedToId }: CreateTaskDto = req.body;
 
@@ -83,7 +84,7 @@ taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), async (req: Auth
 })
 
 //List accessible tasks
-taskRoutes.get('/', requirePermission(Permission.READ_TASK), async (req: AuthenticatedRequest, res: Response) => {
+taskRoutes.get('/', requirePermission(Permission.READ_TASK), auditLogger(Permission.READ_TASK, "Task"), async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userOrgId = req.user!.organizationId;
         const query = req.query;
@@ -135,14 +136,14 @@ taskRoutes.get('/', requirePermission(Permission.READ_TASK), async (req: Authent
 })
 
 //Edit tasks
-taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: AuthenticatedRequest, res: Response) => {
+taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Permission.UPDATE_TASK, "Task"), async (req: AuthenticatedRequest, res: Response) => {
     try {
 
         const { id } = req.params;
 
         const taskRepo = AppDataSource.getRepository(Task);
 
-        const task = await taskRepo.findOne({ where: { id }, relations: ['createdBy', 'assignedTo', 'Organization'] });
+        const task = await taskRepo.findOne({ where: { id }, relations: ['createdBy', 'assignedTo', 'organization'] });
 
         if (!task) return res.status(404).json({
             success: false,
@@ -157,7 +158,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
 
         const allOrgs = await orgRepo.find();
 
-        if (!rbacService.canAccessOrganization(user?.OrganizatioinId, task.organizationId, allOrgs)) {
+        if (!rbacService.canAccessOrganization(user?.organizationId, task.organizationId, allOrgs)) {
             return res.status(403).json({
                 success: false,
                 error: "Access denied"
@@ -210,7 +211,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), async (req: Au
 })
 
 //Delete tasks
-taskRoutes.delete('/:id', requirePermission(Permission.DELETE_TASK), async (req: AuthenticatedRequest, res: Response) => {
+taskRoutes.delete('/:id', requirePermission(Permission.DELETE_TASK), auditLogger(Permission.DELETE_TASK, "Task") , async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { id } = req.params;
         const user = req.user;

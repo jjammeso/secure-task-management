@@ -4,7 +4,6 @@ import express from 'express';
 import taskRoutes from './routes/taskRoute';
 import authRoutes from './routes/authRoutes';
 import auditRoutes from './routes/auditRoutes';
-import { error } from 'console';
 
 const app = express();
 

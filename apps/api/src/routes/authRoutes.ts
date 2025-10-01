@@ -1,14 +1,14 @@
-import { AuthResponse, LoginDto } from "@myorg/data";
-import { Response, Router } from "express";
+import { LoginDto } from "@myorg/data";
+import { Router } from "express";
 import { AppDataSource } from "../db/database";
 import { User } from "../entities";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { AuthenticatedRequest, authenticateJWT } from "../middleware/auth.middleware";
 
-const router = Router();
 
-router.post('/login', async (req, res) => {
+const authRouter = Router();
+
+authRouter.post('/login' ,async (req, res) => {
 
     try {
         const { email, password }: LoginDto = req.body;
@@ -76,4 +76,4 @@ router.post('/login', async (req, res) => {
     }
 })
 
-export default router;
+export default authRouter;
