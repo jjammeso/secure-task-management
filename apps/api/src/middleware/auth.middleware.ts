@@ -32,7 +32,7 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
         req.user = decoded;
-        console.log("here is decoded", decoded);
+
         next();
     } catch (error) {
         return res.status(403).json({ success: false, error: "Invalid or expired token" });
