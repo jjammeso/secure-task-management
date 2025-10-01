@@ -6,7 +6,7 @@ export enum Permission {
     UPDATE_TASK = 'update_task',
     DELETE_TASK = 'delete_task',
     VIEW_AUDIT_LOG = 'view_audit_log',
-    MANAGE_USERS = 'manage_users'
+    MANAGE_USER = 'manage_user'
 }
 
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
@@ -16,17 +16,17 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
         Permission.UPDATE_TASK,
         Permission.DELETE_TASK,
         Permission.VIEW_AUDIT_LOG,
-        Permission.MANAGE_USERS
+        Permission.MANAGE_USER,
     ],
     [Role.ADMIN]: [
         Permission.CREATE_TASK,
         Permission.READ_TASK,
         Permission.UPDATE_TASK,
         Permission.DELETE_TASK,
-        Permission.VIEW_AUDIT_LOG
+        Permission.VIEW_AUDIT_LOG,
     ],
     [Role.VIEWER]: [
-        Permission.READ_TASK
+        Permission.READ_TASK,
     ]
 };
 
@@ -36,7 +36,7 @@ export class RBACService {
         return rolePermissions.includes(permission);
     }
 
-    canAccessOrganization(userOrgId: string, targetOrgId: string, allOrgs: Organization[]):boolean {
+    canAccessOrganization(userOrgId: string, targetOrgId: string, allOrgs: Organization[]): boolean {
         if (userOrgId === targetOrgId) return true;
 
         return this.isChildOrganization(userOrgId, targetOrgId, allOrgs);
@@ -45,11 +45,11 @@ export class RBACService {
     private isChildOrganization(userOrgId: string, targetOrgId: string, allOrgs: Organization[]) {
         const childOrgs = allOrgs.filter(org => org.parentId === userOrgId).map(org => org.id);
 
-        if(childOrgs.length<= 0) return false;
-        if(childOrgs.includes(targetOrgId)) return true;
+        if (childOrgs.length <= 0) return false;
+        if (childOrgs.includes(targetOrgId)) return true;
 
-        for(const childId of childOrgs){
-            if(this.isChildOrganization(childId, targetOrgId, allOrgs)){
+        for (const childId of childOrgs) {
+            if (this.isChildOrganization(childId, targetOrgId, allOrgs)) {
                 return true;
             }
         }
@@ -57,23 +57,23 @@ export class RBACService {
         return false;
     }
 
-    getAccessibleOrganizationIds(role:Role, userOrgId:string, allOrgs:Organization[]):string[]{
+    getAccessibleOrganizationIds(role: Role, userOrgId: string, allOrgs: Organization[]): string[] {
 
         const accessibleIds = new Set<string>();
 
         accessibleIds.add(userOrgId);
 
-        if(role === Role.OWNER || role === Role.ADMIN){
+        if (role === Role.OWNER || role === Role.ADMIN) {
             this.addChildOrganizations(userOrgId, allOrgs, accessibleIds);
         }
-        
+
         return Array.from(accessibleIds);
     }
 
-    private addChildOrganizations(parentId:string, allOrgs:Organization[], accessibleIds:Set<string>):void{
+    private addChildOrganizations(parentId: string, allOrgs: Organization[], accessibleIds: Set<string>): void {
         const children = allOrgs.filter(orgs => orgs.parentId === parentId);
 
-        for(const child of children){
+        for (const child of children) {
             accessibleIds.add(child.id);
             this.addChildOrganizations(child.id, allOrgs, accessibleIds);
         }

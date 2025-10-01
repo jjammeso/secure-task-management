@@ -22,6 +22,7 @@ export const auditLogger = (action: Permission, resource: string) => {
             }
 
             return orginalSend.call(this, data);
-        }
+        };
+        next();
     }
 }
