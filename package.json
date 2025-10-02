@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "dev:api": "npm --workspace api run dev",
-    "dev": "concurrently \"npm run dev:api\""
+    "dev:dashboard": "npm --workspace dashboard run dev",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:dashboard\""
   },
   "repository": {
     "type": "git",
