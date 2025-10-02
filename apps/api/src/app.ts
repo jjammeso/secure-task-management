@@ -18,7 +18,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/audit-log', auditRoutes);
 
 //Health Check
-app.get('health', (req, res) => {
+app.get('/health', (req, res) => {
     res.json({success:true, meassage:"API is running"});
 })
 
