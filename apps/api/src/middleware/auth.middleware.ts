@@ -1,14 +1,14 @@
-import { Role } from "@myorg/data";
-import { error } from "console";
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Permission, rbacService } from '@myorg/auth';
+import { AppDataSource } from "../db/database";
+import { User } from "../entities";
 
 export interface AuthenticatedRequest extends Request {
     user?: JwtPayload
 }
 
-export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
     const token = authHeader && authHeader.startsWith('Bearer ') ?
@@ -31,8 +31,8 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-        req.user = decoded;
 
+        req.user = decoded;
         next();
     } catch (error) {
         return res.status(403).json({ success: false, error: "Invalid or expired token" });

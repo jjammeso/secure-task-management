@@ -1,9 +1,9 @@
 'use client';
 
 import { apiClient } from "@/lib/apiClient";
-import { AuthResponse, LoginDto, User } from "@libs/data/src";
+import { AuthResponse, LoginDto, Role, User } from "@libs/data/src";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-
+import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
     user: User | null;
@@ -11,6 +11,17 @@ interface AuthContextType {
     isAuthenticated: boolean;
     login: (credentials: LoginDto) => Promise<void>;
     logout: () => void;
+}
+
+interface MyJwtPayload {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: Role;
+  organizationId: string;
+  createdAt: Date; 
+  updatedAt: Date; 
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +39,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     useEffect(() => {
         const initAuth = async () => {
             const token = localStorage.getItem('auth_token');
+            if (token !== null) {
+                let tokenObject = jwtDecode(token) as MyJwtPayload | null;
+                if (tokenObject)
+                    setUser({
+                        id: tokenObject.id,
+                        email: tokenObject.email,
+                        firstName: tokenObject.firstName,
+                        lastName: tokenObject.lastName,
+                        role: tokenObject.role,
+                        organizationId: tokenObject.organizationId,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    });
+            }
             setIsLoading(false);
         };
         initAuth();
@@ -68,11 +93,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
 };
 
-export const useAuth = (): AuthContextType =>{
+export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
-    if(context === undefined){
+    if (context === undefined) {
         throw new Error('useAuth must be used within an AutthProvider');
     }
     return context;
 }
-
