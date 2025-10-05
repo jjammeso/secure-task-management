@@ -90,3 +90,13 @@ export interface ApiResponse<T> {
   message?: string;
   error?: string;
 }
+
+export interface TaskQueryParams {
+  status?: TaskStatus;
+  category?: TaskCategory;
+  assignedToId?: string;
+  sortBy?: 'title' | 'createdAt' | 'dueDate' | 'priority';
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+}
