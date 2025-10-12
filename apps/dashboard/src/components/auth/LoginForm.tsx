@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { LoginDto } from '@libs/data/src';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -83,18 +82,6 @@ export const LoginForm: React.FC = () => {
                         Sign in
                     </Button>
 
-                    <div className="text-center">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Don't have an account?{' '}
-                            <button
-                                type="button"
-                                onClick={() => router.push('/register')}
-                                className="font-medium text-primary-600 hover:text-primary-500"
-                            >
-                                Register here
-                            </button>
-                        </p>
-                    </div>
                 </form>
             </div>
         </div>
