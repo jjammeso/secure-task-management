@@ -18,7 +18,7 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export const LoginFrom: React.FC = () => {
+export const LoginForm: React.FC = () => {
 
     const router = useRouter();
     const { login } = useAuth();
