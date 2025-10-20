@@ -13,5 +13,6 @@ export enum TaskStatus{
 export enum TaskCategory {
     WORK = 'work',
     PERSONAL = 'personal',
-    URGENT = 'urgent'
+    URGENT = 'urgent',
+    GENERAL = 'general'
 }

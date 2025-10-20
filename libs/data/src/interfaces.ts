@@ -30,6 +30,7 @@ export interface Task {
   priority: number; // 1-5 scale
   dueDate?: Date;
   assignedToId: string;
+  assignedTo?: User;
   createdById: string;
   organizationId: string;
   createdAt: Date;
