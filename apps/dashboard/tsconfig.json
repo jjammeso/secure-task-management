@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@libs/*":["../../libs/*"]
+      "@myorg/data": ["../../libs/data/src"],
+  "@myorg/auth": ["../../libs/auth/src"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../libs/**/*"],
