@@ -2,10 +2,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Task, TaskStatus, TaskCategory } from '@libs/data/src';
+import { Task, TaskStatus, TaskCategory } from '@myorg/data';
 import { useTask } from '@/hooks/useTask';
 import { useAuth } from '@/contexts/AuthContext';
-import { rbacService, Permission } from '@libs/auth/src';
+import { rbacService, Permission } from '@myorg/auth';
 import { Button } from '@/components/ui/Button';
 import { TaskCard } from '../tasks/TaskCard';
 import { TaskForm } from '../tasks/TaskForm';
@@ -51,9 +51,9 @@ export const Dashboard: React.FC = () => {
   );
 
   // Check permissions
-  const canCreateTask = !!(user && rbacService.hasPermission(user, Permission.CREATE_TASK));
-  const canEditTask = !!(user && rbacService.hasPermission(user, Permission.UPDATE_TASK));
-  const canDeleteTask = !!(user && rbacService.hasPermission(user, Permission.DELETE_TASK));
+  const canCreateTask = !!(user && rbacService.hasPermission(user.role, Permission.CREATE_TASK));
+  const canEditTask = !!(user && rbacService.hasPermission(user.role, Permission.UPDATE_TASK));
+  const canDeleteTask = !!(user && rbacService.hasPermission(user.role, Permission.DELETE_TASK));
 
   // Handlers
   const handleCreateTask = async (data: any) => {

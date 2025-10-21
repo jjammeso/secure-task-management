@@ -4,11 +4,8 @@
     "composite": true,
     "declaration": true,
     "rootDir": "src",
-    "outDir": "../../libs/dist/auth"
+    "outDir": "../../dist/libs/auth"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["**/*.spec.ts"],
-   "references": [
-    { "path": "../data" } // Adjust path as needed
-  ]
 }

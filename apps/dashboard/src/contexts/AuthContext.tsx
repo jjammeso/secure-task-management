@@ -1,7 +1,7 @@
 'use client';
 
 import { apiClient } from "@/lib/apiClient";
-import { AuthResponse, LoginDto, Role, User } from "@libs/data/src";
+import { AuthResponse, LoginDto, Role, User } from "@myorg/data";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 

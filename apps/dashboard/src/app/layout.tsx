@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import "./globals.css";
+import { Providers } from "@/components/layout/Providers";
 
 export const metadata: Metadata = {
   title: 'Task Management System',
@@ -21,14 +22,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
-        <AuthProvider>
+        <Providers>
           {children}
           <Toaster
             position="top-right"
             reverseOrder={false}
             gutter={8}
           />
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );

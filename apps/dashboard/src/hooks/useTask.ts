@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/apiClient";
-import { CreateTaskDto, Task, TaskQueryParams, UpdateTaskDto } from "@libs/data/src";
+import { CreateTaskDto, Task, TaskQueryParams, UpdateTaskDto } from "@myorg/data";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
