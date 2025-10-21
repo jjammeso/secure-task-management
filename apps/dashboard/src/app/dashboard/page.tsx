@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/layout/Header';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
