@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CreateTaskDto, TaskStatus, TaskCategory, UpdateTaskDto, Task } from '@libs/data/src';
+import { CreateTaskDto, TaskStatus, TaskCategory, UpdateTaskDto, Task } from '@myorg/data';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 

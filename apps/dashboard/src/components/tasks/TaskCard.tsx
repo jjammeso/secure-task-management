@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { format } from 'date-fns';
-import { Task, TaskStatus, TaskCategory } from '@libs/data/src';
+import { Task, TaskStatus, TaskCategory } from '@myorg/data';
 import { Button } from '@/components/ui/Button';
 import { 
   CalendarIcon, 

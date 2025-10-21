@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { TaskStatus, TaskCategory } from  '@libs/data/src';
+import { TaskStatus, TaskCategory } from  '@myorg/data';
 import { Button } from '@/components/ui/Button';
 
 interface TaskFilterProps {

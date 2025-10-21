@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ApiResponse } from '../../../libs/data/src/types';
+import { ApiResponse } from '@myorg/data';
 
 class ApiClient {
   private client: AxiosInstance;
