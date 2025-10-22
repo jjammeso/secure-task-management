@@ -26,6 +26,14 @@ taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Perm
 
         let assignedUser = null;
 
+        if(!assignedToId){
+             return res.status(400).json({
+                    success: false,
+                    error: 'Task is not assigned to anyone'
+                })
+        }
+
+
         if (assignedToId) {
             assignedUser = await userRepository.findOne({
                 where: { id: assignedToId }
