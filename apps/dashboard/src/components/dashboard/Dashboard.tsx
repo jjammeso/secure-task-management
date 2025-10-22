@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Task, TaskStatus, TaskCategory } from '@myorg/data';
 import { useTask } from '@/hooks/useTask';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,6 +12,7 @@ import { TaskForm } from '../tasks/TaskForm';
 import { TaskFilter } from '../tasks/TaskFilter';
 import { Input } from '@/components/ui/Input';
 import toast from 'react-hot-toast';
+
 import {
   PlusIcon,
   XMarkIcon,
@@ -51,6 +52,8 @@ export const Dashboard: React.FC = () => {
   );
 
   // Check permissions
+  console.log('here is role',user, user?.role);
+
   const canCreateTask = !!(user && rbacService.hasPermission(user.role, Permission.CREATE_TASK));
   const canEditTask = !!(user && rbacService.hasPermission(user.role, Permission.UPDATE_TASK));
   const canDeleteTask = !!(user && rbacService.hasPermission(user.role, Permission.DELETE_TASK));
