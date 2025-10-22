@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 
 const authRouter = Router();
 
-authRouter.post('/login' ,async (req, res) => {
+authRouter.post('/login', async (req, res) => {
 
     try {
         const { email, password }: LoginDto = req.body;
@@ -63,9 +63,11 @@ authRouter.post('/login' ,async (req, res) => {
 
         return res.json({
             success: true,
-            token,
-            user: {
-                id: user.id, email: user.email, name: user.firstName + " " + user.lastName
+            data: {
+                token,
+                user: {
+                    id: user.id, email: user.email, name: user.firstName + " " + user.lastName
+                }
             }
         })
     } catch (error) {

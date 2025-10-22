@@ -69,7 +69,7 @@ class ApiClient {
         throw new Error(response.data.error || 'Request failed');
       }
       
-      return response.data as T;
+      return response.data.data as T;
     } catch (error: any) {
       if (error.response?.data?.error) {
         throw new Error(error.response.data.error);

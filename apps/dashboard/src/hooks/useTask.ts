@@ -4,10 +4,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
 interface TasksResponse {
-    tasks: Task[];
-    total: number;
-    page: number;
-    limit: number;
+   tasks:any[];
+   total: number;
+   page: number;
+   limit: number;
 }
 
 export const useTask = () => {
@@ -45,7 +45,7 @@ export const useTask = () => {
     })
 
     const deleteTask = useMutation({
-        mutationFn: (id:string) => apiClient.delete((`tass/${id}`)),
+        mutationFn: (id:string) => apiClient.delete((`tasks/${id}`)),
         onSuccess: () =>{
             queryClient.invalidateQueries({queryKey: [`tasks`]});
         }
