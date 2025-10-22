@@ -14,14 +14,14 @@ interface AuthContextType {
 }
 
 interface MyJwtPayload {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: Role;
-  organizationId: string;
-  createdAt: Date; 
-  updatedAt: Date; 
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: Role;
+    organizationId: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const isAuthenticated = (user !== null && user !== undefined);
+    const isAuthenticated = !!user;
 
     useEffect(() => {
         const initAuth = async () => {
@@ -65,7 +65,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const response = await apiClient.post<AuthResponse>('/auth/login', credential);
 
             apiClient.setToken(response.token);
-            setUser(response.user);
+
+            const tokenObject = jwtDecode(response.token) as MyJwtPayload;
+            setUser({
+                id: tokenObject.id,
+                email: tokenObject.email,
+                firstName: tokenObject.firstName,
+                lastName: tokenObject.lastName,
+                role: tokenObject.role,
+                organizationId: tokenObject.organizationId,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
         } catch (error) {
             throw error;
         } finally {
@@ -96,7 +107,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (context === undefined) {
-        throw new Error('useAuth must be used within an AutthProvider');
+        throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
 }
