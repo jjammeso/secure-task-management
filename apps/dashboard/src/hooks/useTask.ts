@@ -13,9 +13,9 @@ interface TasksResponse {
 export const useTask = () => {
     const queryClient = useQueryClient();
 
-    const useTasks = (params?: TaskQueryParams) => {
+    const useTasks = (userId:string, params?: TaskQueryParams) => {
         return useQuery({
-            queryKey: ['tasks', params],
+            queryKey: ['tasks', userId,  params],
             queryFn: () => apiClient.get<TasksResponse>('/tasks', { params }),
             staleTime: 30000,
         });
