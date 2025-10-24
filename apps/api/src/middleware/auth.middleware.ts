@@ -1,11 +1,21 @@
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { Permission, rbacService } from '@myorg/auth';
-import { AppDataSource } from "../db/database";
-import { User } from "../entities";
+import { Role } from "@myorg/data";
+
+export interface JwtUserPayload {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: Role;     // ✅ Enum instead of string
+  organizationId: string;
+  iat?: number;
+  exp?: number;
+}
 
 export interface AuthenticatedRequest extends Request {
-    user?: JwtPayload
+    user?: JwtUserPayload
 }
 
 export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -30,7 +40,7 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
     };
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+        const decoded = jwt.verify(token, JWT_SECRET) as JwtUserPayload;
 
         req.user = decoded;
         next();

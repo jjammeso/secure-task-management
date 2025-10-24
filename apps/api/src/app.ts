@@ -4,6 +4,7 @@ import express from 'express';
 import taskRoutes from './routes/taskRoute';
 import authRoutes from './routes/authRoutes';
 import auditRoutes from './routes/auditRoutes';
+import userRoutes from './routes/userRoutes';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({extended:true}));
 app.use('/api/tasks', taskRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/audit-log', auditRoutes);
+app.use('/api/users', userRoutes);
 
 //Health Check
 app.get('/health', (req, res) => {

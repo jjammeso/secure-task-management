@@ -6,7 +6,8 @@ export enum Permission {
     UPDATE_TASK = 'update_task',
     DELETE_TASK = 'delete_task',
     VIEW_AUDIT_LOG = 'view_audit_log',
-    MANAGE_USER = 'manage_user'
+    MANAGE_USER = 'manage_user',
+    VIEW_USER = 'view_user'
 }
 
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
@@ -17,6 +18,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
         Permission.DELETE_TASK,
         Permission.VIEW_AUDIT_LOG,
         Permission.MANAGE_USER,
+        Permission.VIEW_USER,
     ],
     [Role.ADMIN]: [
         Permission.CREATE_TASK,
@@ -24,6 +26,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
         Permission.UPDATE_TASK,
         Permission.DELETE_TASK,
         Permission.VIEW_AUDIT_LOG,
+        Permission.VIEW_USER,
     ],
     [Role.VIEWER]: [
         Permission.READ_TASK,
