@@ -36,7 +36,6 @@ userRouter.get('/', requirePermission(Permission.VIEW_USER), async(req:Authentic
         'user.firstName',
         'user.lastName',
         'user.role',
-        'user.organizationId',
         'organization.id',
         'organization.name'
     ]).orderBy('user.firstName', 'ASC').getMany();
