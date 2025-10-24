@@ -39,7 +39,7 @@ export const Dashboard: React.FC = () => {
   const [taskModal, setTaskModal] = useState<TaskModalState>({ isOpen: false, mode: 'create' });
 
   // Fetch tasks
-  const { data: tasksData, isLoading, error } = useTasks({
+  const { data: tasksData, isLoading, error } = useTasks(user!.id, {
     status: selectedStatus,
     category: selectedCategory,
     sortBy,
@@ -52,8 +52,6 @@ export const Dashboard: React.FC = () => {
   );
 
   // Check permissions
-  console.log('here is role',user, user?.role);
-
   const canCreateTask = !!(user && rbacService.hasPermission(user.role, Permission.CREATE_TASK));
   const canEditTask = !!(user && rbacService.hasPermission(user.role, Permission.UPDATE_TASK));
   const canDeleteTask = !!(user && rbacService.hasPermission(user.role, Permission.DELETE_TASK));
