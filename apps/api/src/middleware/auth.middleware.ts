@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from 'jsonwebtoken';
-import { Permission, rbacService } from '@myorg/auth';
+import { Permission, rbacService, jwtService } from '@myorg/auth';
 import { Role } from "@myorg/data";
 
 export interface JwtUserPayload {
-  id: string;
+  userId: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -21,27 +20,15 @@ export interface AuthenticatedRequest extends Request {
 export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
-    const token = authHeader && authHeader.startsWith('Bearer ') ?
-        authHeader.slice(7) : null;
+    const token = jwtService.extractTokenFromHeader(authHeader);
 
     if (!token) return res.status(401).json({
         success: false,
         error: "Access token required"
     });
 
-    const JWT_SECRET = process.env.JWT_SECRET;
-
-    if (!JWT_SECRET) {
-        console.error("JWT_SECRET is not defined in the environment variables");
-        return res.status(500).json({
-            success: false,
-            errror: "Internal server error"
-        })
-    };
-
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as JwtUserPayload;
-
+        const decoded = jwtService.verifyToken(token);
         req.user = decoded;
         next();
     } catch (error) {

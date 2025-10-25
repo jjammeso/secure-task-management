@@ -20,7 +20,7 @@ auditRouter.get('/', requirePermission(Permission.VIEW_AUDIT_LOG), async (req: A
         const orgRepo = AppDataSource.getRepository(Organization);
         const allOrgs = await orgRepo.find();
 
-        const accessibleOrgIds = rbacService.getAccessibleOrganizationIds(req.user?.role, req.user?.organizationId, allOrgs);
+        const accessibleOrgIds = rbacService.getAccessibleOrganizationIds(req.user!.role, req.user!.organizationId, allOrgs);
 
         if(!accessibleOrgIds){
             return res.status(500).json({

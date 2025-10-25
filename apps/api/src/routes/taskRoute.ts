@@ -6,11 +6,11 @@ import { AuthenticatedRequest, authenticateJWT, requirePermission } from "../mid
 import { Permission, rbacService } from "@myorg/auth";
 import { auditLogger } from "../middleware/audit.middleware";
 
-const taskRoutes = Router()
-taskRoutes.use(authenticateJWT);
+const taskRouter = Router()
+taskRouter.use(authenticateJWT);
 
 //Create task
-taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Permission.CREATE_TASK, "Task") , async (req: AuthenticatedRequest, res: Response) => {
+taskRouter.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Permission.CREATE_TASK, "Task") , async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { title, description, category, priority, dueDate, assignedToId }: CreateTaskDto = req.body;
 
@@ -70,7 +70,7 @@ taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Perm
             priority: priority || 3,
             dueDate: dueDate ? new Date(dueDate) : undefined,
             assignedToId: assignedToId,
-            createdById: req.user.id,
+            createdById: req.user.userId,
             organizationId: assignedUser?.organizationId || req.user.organizationId,
             status: TaskStatus.TODO
         })
@@ -92,7 +92,7 @@ taskRoutes.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Perm
 })
 
 //List accessible tasks
-taskRoutes.get('/', requirePermission(Permission.READ_TASK), auditLogger(Permission.READ_TASK, "Task"), async (req: AuthenticatedRequest, res: Response) => {
+taskRouter.get('/', requirePermission(Permission.READ_TASK), auditLogger(Permission.READ_TASK, "Task"), async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userOrgId = req.user!.organizationId;
         const query = req.query;
@@ -144,7 +144,7 @@ taskRoutes.get('/', requirePermission(Permission.READ_TASK), auditLogger(Permiss
 })
 
 //Edit tasks
-taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Permission.UPDATE_TASK, "Task"), async (req: AuthenticatedRequest, res: Response) => {
+taskRouter.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Permission.UPDATE_TASK, "Task"), async (req: AuthenticatedRequest, res: Response) => {
     try {
 
         const { id } = req.params;
@@ -167,7 +167,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Pe
 
         const allOrgs = await orgRepo.find();
 
-        if (!rbacService.canAccessOrganization(user?.organizationId, task.organizationId, allOrgs)) {
+        if (!rbacService.canAccessOrganization(user!.organizationId, task.organizationId, allOrgs)) {
             return res.status(403).json({
                 success: false,
                 error: "Access denied"
@@ -181,7 +181,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Pe
                 return res.status(400).json({ success: false, error: "Assigned User not found" })
             }
 
-            if (!rbacService.canAccessOrganization(user?.organizationId, assignedUser.organizationId, allOrgs)) {
+            if (!rbacService.canAccessOrganization(user?.organizationId!, assignedUser.organizationId, allOrgs)) {
                 return res.status(403).json({ success: false, error: "Assigned user is outside your organization" });
             }
         }
@@ -220,7 +220,7 @@ taskRoutes.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Pe
 })
 
 //Delete tasks
-taskRoutes.delete('/:id', requirePermission(Permission.DELETE_TASK), auditLogger(Permission.DELETE_TASK, "Task") , async (req: AuthenticatedRequest, res: Response) => {
+taskRouter.delete('/:id', requirePermission(Permission.DELETE_TASK), auditLogger(Permission.DELETE_TASK, "Task") , async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { id } = req.params;
         const user = req.user;
@@ -233,7 +233,7 @@ taskRoutes.delete('/:id', requirePermission(Permission.DELETE_TASK), auditLogger
         const orgRepo = AppDataSource.getRepository(Organization);
         const allOrgs = await orgRepo.find();
 
-        if (!rbacService.canAccessOrganization(user?.organizationId, task.organizationId, allOrgs))
+        if (!rbacService.canAccessOrganization(user?.organizationId!, task.organizationId, allOrgs))
             return res.status(403).json({
                 success: false,
                 error: "Cannot delete task outside your organization"
@@ -256,4 +256,4 @@ taskRoutes.delete('/:id', requirePermission(Permission.DELETE_TASK), auditLogger
 })
 
 
-export default taskRoutes;
+export default taskRouter;

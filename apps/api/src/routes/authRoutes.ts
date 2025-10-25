@@ -2,9 +2,7 @@ import { LoginDto } from "@myorg/data";
 import { Router } from "express";
 import { AppDataSource } from "../db/database";
 import { User } from "../entities";
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-
+import { jwtService } from "@myorg/auth";
 
 const authRouter = Router();
 
@@ -34,7 +32,8 @@ authRouter.post('/login', async (req, res) => {
                 error: "No user with this email"
             })
 
-        const isValidPassword = await bcrypt.compare(password, user.password)
+        const isValidPassword = await jwtService.comparePassword(password, user.password);
+        
         if (!isValidPassword) {
             return res.status(401).json({
                 success: false,
@@ -42,24 +41,7 @@ authRouter.post('/login', async (req, res) => {
             })
         }
 
-        const JWT_SECRET = process.env.JWT_SECRET || 'secretkey';
-
-        if (!JWT_SECRET) {
-            throw new Error("JWT_SECRET is not defined in environment variables");
-        }
-
-        const token = jwt.sign(
-            {
-                id: user.id,
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                role: user.role,
-                organizationId: user.organizationId
-            },
-            JWT_SECRET,
-            { expiresIn: '1d' }
-        )
+        const token = jwtService.generateToken(user);
 
         return res.json({
             success: true,

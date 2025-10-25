@@ -2,12 +2,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { CreateTaskDto, TaskStatus, TaskCategory, UpdateTaskDto, Task } from '@myorg/data';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { UserSelect } from './UserSelect';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -39,6 +40,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
@@ -85,6 +87,9 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           rows={4}
           className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
         />
+        {errors.description && (
+          <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -133,14 +138,30 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             {...register('priority', { valueAsNumber: true })}
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
           />
+          {errors.priority && (
+            <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
+          )}
         </div>
 
         <Input
           label="Due Date"
           type="date"
           {...register('dueDate')}
+          error={errors.dueDate?.message}
         />
       </div>
+
+       <Controller
+          name="assignedToId"
+          control={control}
+          render={({ field }) => (
+            <UserSelect
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.assignedToId?.message}
+              label="Assign To"
+            />
+          )}/>
 
       <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
         {onCancel && (
