@@ -1,9 +1,12 @@
 {
   "name": "@myorg/auth",
   "version": "1.0.0",
-   "main": "src/index.ts", 
+  "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2"
   }
 }
