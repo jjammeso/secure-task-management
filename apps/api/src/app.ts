@@ -1,5 +1,6 @@
 import express from 'express';
-
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 //Import routes
 import taskRoutes from './routes/taskRoute';
 import authRoutes from './routes/authRoutes';
@@ -9,8 +10,15 @@ import userRoutes from './routes/userRoutes';
 const app = express();
 
 //Middleware
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true
+}))
+
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({extended:true}));
+
 
 
 //Routes
