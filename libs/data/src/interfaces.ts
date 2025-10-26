@@ -8,8 +8,8 @@ export interface User {
     lastName: string;
     role: Role;
     organizationId: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface Organization {
