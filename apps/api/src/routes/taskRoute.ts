@@ -70,7 +70,7 @@ taskRouter.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Perm
             priority: priority || 3,
             dueDate: dueDate ? new Date(dueDate) : undefined,
             assignedToId: assignedToId,
-            createdById: req.user.userId,
+            createdById: req.user.id,
             organizationId: assignedUser?.organizationId || req.user.organizationId,
             status: TaskStatus.TODO
         })

@@ -1,20 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { Permission, rbacService, jwtService } from '@myorg/auth';
 import { Role } from "@myorg/data";
-
-export interface JwtUserPayload {
-  userId: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: Role;     // ✅ Enum instead of string
-  organizationId: string;
-  iat?: number;
-  exp?: number;
-}
+import { AppDataSource } from "../db/database";
+import { User } from "../entities";
 
 export interface AuthenticatedRequest extends Request {
-    user?: JwtUserPayload
+    user?: User
 }
 
 export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -29,7 +20,21 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
 
     try {
         const decoded = jwtService.verifyToken(token);
-        req.user = decoded;
+
+        const userRepo = AppDataSource.getRepository(User);
+        const user = await userRepo.findOne({
+            where: { id: decoded.userId },
+            relations: ['organization']
+        });
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                error: 'User not found'
+            });
+        }
+
+        req.user = user;
         next();
     } catch (error) {
         return res.status(403).json({ success: false, error: "Invalid or expired token" });

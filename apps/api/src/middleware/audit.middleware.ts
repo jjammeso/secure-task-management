@@ -13,7 +13,7 @@ export const auditLogger = (action: Permission, resource: string) => {
                 const auditRepository = AppDataSource.getRepository(AuditLog);
 
                 auditRepository.save({
-                    userId: req.user.userId,
+                    userId: req.user.id,
                     action,
                     resource,
                     resourceId: req.params.id || 'N/A',
