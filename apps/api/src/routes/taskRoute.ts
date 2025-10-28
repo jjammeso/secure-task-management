@@ -107,8 +107,6 @@ taskRouter.get('/', requirePermission(Permission.READ_TASK), auditLogger(Permiss
         const allOrgs = await orgRepo.find();
         const accessibleOrgIds = rbacService.getAccessibleOrganizationIds(req.user!.role, userOrgId, allOrgs);
 
-        console.log("access org id", accessibleOrgIds);
-
         const queryBuilder = taskRepo.createQueryBuilder('task')
             .leftJoinAndSelect('task.createdBy', 'createdBy')
             .leftJoinAndSelect('task.assignedTo', 'assignedTo')

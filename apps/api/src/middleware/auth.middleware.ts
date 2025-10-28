@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { Permission, rbacService, jwtService } from '@myorg/auth';
-import { Role } from "@myorg/data";
 import { AppDataSource } from "../db/database";
 import { User } from "../entities";
 
