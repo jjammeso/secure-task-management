@@ -80,9 +80,11 @@ export interface RegisterDto {
   organizationName?: string;
 }
 
+export type SafeUser = Omit<User, 'password'>;
+
 export interface AuthResponse {
   token: string;
-  user: Omit<User, 'password'>;
+  user: SafeUser;
 }
 
 export interface ApiResponse<T> {
@@ -109,4 +111,8 @@ export interface JwtPayload {
   lastName: string,
   role: Role;
   organizationId: string;
+}
+
+export interface UserWithOrganization extends SafeUser {
+  organization?: Organization;
 }
