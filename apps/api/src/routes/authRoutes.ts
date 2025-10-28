@@ -1,9 +1,9 @@
-import { ApiResponse, AuthResponse, LoginDto } from "@myorg/data";
+import { ApiResponse, AuthResponse, LoginDto, SafeUser } from "@myorg/data";
 import { Router, Response } from "express";
 import { AppDataSource } from "../db/database";
 import { User } from "../entities";
 import { jwtService } from "@myorg/auth";
-import { AuthenticatedRequest } from "../middleware/auth.middleware";
+import { AuthenticatedRequest, authenticateJWT } from "../middleware/auth.middleware";
 
 const authRouter = Router();
 
@@ -24,7 +24,8 @@ authRouter.post('/login', async (req: AuthenticatedRequest, res: Response<ApiRes
         const userRepository = AppDataSource.getRepository(User);
 
         const user = await userRepository.findOne({
-            where: { email }
+            where: { email: email.toLowerCase() },
+            relations: ['organization']
         })
 
         if (!user)
@@ -53,12 +54,14 @@ authRouter.post('/login', async (req: AuthenticatedRequest, res: Response<ApiRes
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
+        const { password: _, ...safeUser } = user;
+
         return res.json({
             success: true,
             data: {
                 token,
-                user
-            }
+                user: safeUser,
+            },
         })
     } catch (error) {
         console.error('Login error:', error);
@@ -68,6 +71,35 @@ authRouter.post('/login', async (req: AuthenticatedRequest, res: Response<ApiRes
         });
     }
 })
+
+/**
+ * GET /api/auth/me
+ */
+authRouter.get('/me', authenticateJWT, async (req: AuthenticatedRequest, res: Response<ApiResponse<SafeUser>>) => {
+    try {
+        if (!req.user) {
+            res.status(401).json({
+                success: false,
+                error: 'Not authenticated'
+            });
+            return;
+        }
+
+        const { password, ...userWithoutPassword } = req.user;
+
+        res.json({
+            success: true,
+            data: userWithoutPassword
+        });
+    } catch (error) {
+        console.error('Get profile error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
+});
+
 
 authRouter.post('/refresh', async (req: AuthenticatedRequest, res: Response<ApiResponse<{ token: string }>>) => {
     try {
@@ -89,7 +121,7 @@ authRouter.post('/refresh', async (req: AuthenticatedRequest, res: Response<ApiR
         });
 
         if (!user) {
-            res.clearCookie('refreshToken', {path:'/api/auth/refresh'});
+            res.clearCookie('refreshToken', { path: '/api/auth/refresh' });
             return res.status(401).json({
                 success: false,
                 error: 'Invalid refresh token'
