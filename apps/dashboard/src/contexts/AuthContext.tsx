@@ -1,12 +1,12 @@
 'use client';
 
 import { apiClient } from "@/lib/apiClient";
-import { AuthResponse, LoginDto, Role, User, JwtPayload } from "@myorg/data";
+import { AuthResponse, LoginDto, JwtPayload, UserWithOrganization } from "@myorg/data";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 interface AuthContextType {
-    user: User | null;
+    user: UserWithOrganization | null;
     isLoading: boolean;
     isAuthenticated: boolean;
     login: (credentials: LoginDto) => Promise<void>;
@@ -20,7 +20,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<UserWithOrganization | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const isAuthenticated = !!user;
@@ -28,22 +28,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     useEffect(() => {
         const initAuth = async () => {
             const token = localStorage.getItem('auth_token');
-            if (token !== null) {
-                let tokenObject = jwtDecode(token) as JwtPayload | null;
-                if (tokenObject)
-                    setUser({
-                        id: tokenObject.userId,
-                        email: tokenObject.email,
-                        firstName: tokenObject.firstName,
-                        lastName: tokenObject.lastName,
-                        role: tokenObject.role,
-                        organizationId: tokenObject.organizationId,
-                    });
+            if (token) {
+                try {
+                    await refreshUser();
+                } catch (error) {
+                    console.error('Failed to refresh user:', error);
+                    logout();
+                }
             }
             setIsLoading(false);
         };
         initAuth();
     }, []);
+
 
     const login = async (credential: LoginDto): Promise<void> => {
         try {
@@ -54,14 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             apiClient.setToken(response.token);
 
             const tokenObject = jwtDecode(response.token) as JwtPayload;
-            setUser({
-                id: tokenObject.userId,
-                email: tokenObject.email,
-                firstName: tokenObject.firstName,
-                lastName: tokenObject.lastName,
-                role: tokenObject.role,
-                organizationId: tokenObject.organizationId,
-            });
+            setUser(response.user);
         } catch (error) {
             throw error;
         } finally {
@@ -72,6 +62,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const logout = async (): Promise<void> => {
         localStorage.removeItem('auth_token');
         setUser(null);
+    };
+
+    const refreshUser = async (): Promise<void> => {
+        try {
+            const userData = await apiClient.get<UserWithOrganization>('/auth/me');
+            console.log('here is userData', userData);
+            setUser(userData);
+            console.log('user in refresh', user);
+        } catch (error) {
+            throw error;
+        }
     };
 
     const value: AuthContextType = {
