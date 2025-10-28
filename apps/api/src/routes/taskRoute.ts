@@ -70,7 +70,7 @@ taskRouter.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Perm
             priority: priority || 3,
             dueDate: dueDate ? new Date(dueDate) : undefined,
             assignedToId: assignedToId,
-            createdById: req.user.userId,
+            createdById: req.user.id,
             organizationId: assignedUser?.organizationId || req.user.organizationId,
             status: TaskStatus.TODO
         })
@@ -106,8 +106,6 @@ taskRouter.get('/', requirePermission(Permission.READ_TASK), auditLogger(Permiss
 
         const allOrgs = await orgRepo.find();
         const accessibleOrgIds = rbacService.getAccessibleOrganizationIds(req.user!.role, userOrgId, allOrgs);
-
-        console.log("access org id", accessibleOrgIds);
 
         const queryBuilder = taskRepo.createQueryBuilder('task')
             .leftJoinAndSelect('task.createdBy', 'createdBy')
