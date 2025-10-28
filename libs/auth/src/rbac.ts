@@ -1,4 +1,4 @@
-import { Organization, Role, User } from '@myorg/data';
+import { Organization, Role } from '@myorg/data'
 
 export enum Permission {
     CREATE_TASK = 'create_task',
