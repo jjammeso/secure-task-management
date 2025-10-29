@@ -1,10 +1,10 @@
 import { apiClient } from "@/lib/apiClient";
-import { User } from "@myorg/data";
+import { UserWithOrganization } from "@myorg/data";
 import { useQuery } from "@tanstack/react-query";
 
 
 interface UsersResponse{
-    users: User[];
+    users: UserWithOrganization[];
     total:number;
 }
 

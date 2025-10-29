@@ -1,6 +1,6 @@
-import { Request, Response, Router } from "express"
+import {  Response, Router } from "express"
 import { AuthenticatedRequest, authenticateJWT, requirePermission } from "../middleware/auth.middleware";
-import { ApiResponse, Role } from "@myorg/data";
+import { ApiResponse,  UserWithOrganization } from "@myorg/data";
 import { Permission, rbacService } from "@myorg/auth";
 import { AppDataSource } from "../db/database";
 import { Organization, User } from "../entities";
@@ -9,7 +9,7 @@ const userRouter = Router();
 
 userRouter.use(authenticateJWT);
 
-userRouter.get('/', requirePermission(Permission.VIEW_USER), async(req:AuthenticatedRequest, res:Response<ApiResponse<{users:User[], total:number}>>) => {
+userRouter.get('/', requirePermission(Permission.VIEW_USER), async(req:AuthenticatedRequest, res:Response<ApiResponse<{users:UserWithOrganization[], total:number}>>) => {
     
    try {
     const user = req.user!;

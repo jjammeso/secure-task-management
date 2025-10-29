@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { User } from '@myorg/data';
 import { useUser } from '@/hooks/useUser';
 
 interface UserSelectProps {
@@ -53,7 +52,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
         
         {users.map((user) => (
           <option key={user.id} value={user.id}>
-            {user.firstName} {user.lastName} ({user.role}) - {'No Org'}
+            {user.firstName} {user.lastName} ({user.role}) - {user.organization?.name || 'No Org'}
           </option>
         ))}
       </select>
