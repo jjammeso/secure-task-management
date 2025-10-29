@@ -10,7 +10,7 @@ const taskRouter = Router()
 taskRouter.use(authenticateJWT);
 
 //Create task
-taskRouter.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Permission.CREATE_TASK, "Task") , async (req: AuthenticatedRequest, res: Response) => {
+taskRouter.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Permission.CREATE_TASK, "Task"), async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { title, description, category, priority, dueDate, assignedToId }: CreateTaskDto = req.body;
 
@@ -26,15 +26,9 @@ taskRouter.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Perm
 
         let assignedUser = null;
 
-        if(!assignedToId){
-             return res.status(400).json({
-                    success: false,
-                    error: 'Task is not assigned to anyone'
-                })
-        }
-
-
-        if (assignedToId) {
+        if (!assignedToId) {
+            assignedUser = req.user;
+        } else {
             assignedUser = await userRepository.findOne({
                 where: { id: assignedToId }
             })
@@ -69,7 +63,7 @@ taskRouter.post('/', requirePermission(Permission.CREATE_TASK), auditLogger(Perm
             category,
             priority: priority || 3,
             dueDate: dueDate ? new Date(dueDate) : undefined,
-            assignedToId: assignedToId,
+            assignedToId: assignedUser.id,
             createdById: req.user.id,
             organizationId: assignedUser?.organizationId || req.user.organizationId,
             status: TaskStatus.TODO
@@ -218,7 +212,7 @@ taskRouter.put('/:id', requirePermission(Permission.UPDATE_TASK), auditLogger(Pe
 })
 
 //Delete tasks
-taskRouter.delete('/:id', requirePermission(Permission.DELETE_TASK), auditLogger(Permission.DELETE_TASK, "Task") , async (req: AuthenticatedRequest, res: Response) => {
+taskRouter.delete('/:id', requirePermission(Permission.DELETE_TASK), auditLogger(Permission.DELETE_TASK, "Task"), async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { id } = req.params;
         const user = req.user;
