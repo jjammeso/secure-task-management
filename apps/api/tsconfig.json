@@ -4,11 +4,24 @@
     "outDir": "../../dist/apps/api",
     "rootDir": "src",
     "module": "commonjs",
+    "types": [
+      "node",
+      "jest"
+    ], // ← ADD "jest" here
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
   "references": [
-    { "path": "../../libs/data" },
-    {"path": "../../libs/auth"}
+    {
+      "path": "../../libs/data"
+    },
+    {
+      "path": "../../libs/auth"
+    }
   ]
 }
