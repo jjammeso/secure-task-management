@@ -5,6 +5,7 @@
   "type": "commonjs",
   "main": "src/index.ts",
   "scripts": {
+    "test": "jest",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn src/index.ts"
   },
   "author": "",
@@ -23,6 +24,11 @@
     "@types/bcrypt": "6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3"
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^6.0.3",
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.5"
   }
 }
