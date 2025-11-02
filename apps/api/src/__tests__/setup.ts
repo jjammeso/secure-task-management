@@ -11,7 +11,6 @@ beforeAll(async ()=>{
         synchronize: true,
         logging: false,
     })
-
     await testDataSource.initialize();
 })
 
@@ -27,3 +26,7 @@ beforeEach(async ()=>{
         await repository.clear();
     }
 })
+
+it('setup file dummy test', () => {
+  expect(true).toBe(true);
+});
