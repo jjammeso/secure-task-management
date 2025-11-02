@@ -13,15 +13,9 @@ const IS_TEST = NODE_ENV === 'test';
 
 console.log(`🌍 Environment: ${NODE_ENV}`);
 
-async function startServer() {
-    try {
+AppDataSource.initialize()
+    .then(async () => {
         const app = new App();
-        await app.initialize();
+        await seed(AppDataSource);
         app.listen(PORT);
-    } catch (error) {
-        console.error('Failed to start server:', error);
-        process.exit(1);
-    }
-}
-
-startServer();
+    }).catch(error => console.error("Error during Data Source initialization:", error));

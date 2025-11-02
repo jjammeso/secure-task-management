@@ -13,6 +13,8 @@ export const AppDataSource = new DataSource({
     subscribers: ['src/subscribers/**/*.ts'],
 })
 
+
+
 //Populate database with organization and some users
 
 const orgStructure = [
@@ -118,5 +120,4 @@ export async function seed(appDataSource: DataSource) {
             console.log(`    ➤ Set ${u.firstName} as owner of ${u.orgName}`);
         }
     }
-
 }

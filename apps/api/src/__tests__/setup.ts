@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 import { User, Organization, Task, AuditLog } from "../entities";
+import { AppDataSource, seed } from "../db/database";
 
 export let testDataSource: DataSource;
 
@@ -12,6 +13,7 @@ beforeAll(async ()=>{
         logging: false,
     })
     await testDataSource.initialize();
+    await seed(testDataSource);
 })
 
 afterAll(async () =>{

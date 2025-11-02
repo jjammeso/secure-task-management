@@ -8,11 +8,9 @@ import { jwtService } from '@myorg/auth';
 
 describe('Authentication', () => {
     let app: App;
-    let organization: Organization;
 
     beforeAll(async () => {
-        app = new App(testDataSource);
-        await app.initialize();
+        app = new App();
     })
 
     describe('POST /api/auth/login', () => {
@@ -29,6 +27,8 @@ describe('Authentication', () => {
             expect(response.body.data.user.email).toBe('alice@email.com');
             expect(response.body.data.token).toBeDefined();
         })
+
+
 
         it('should not login with invalid credentials', async ()=>{
             const response = await request(app.app)

@@ -6,16 +6,13 @@ import taskRoutes from './routes/taskRoute';
 import authRoutes from './routes/authRoutes';
 import auditRoutes from './routes/auditRoutes';
 import userRoutes from './routes/userRoutes';
-import { DataSource } from 'typeorm';
-import { AppDataSource, seed } from './db/database';
+
 
 class App {
     public app: express.Application;
-    private dataSource: DataSource;
 
-    constructor(dataSource:DataSource = AppDataSource) {
+    constructor() {
         this.app = express();
-        this.dataSource = dataSource;
         this.initializeMiddlewares();
         this.initializeRoutes();
     }
@@ -60,17 +57,6 @@ class App {
                 error: "Route not found"
             });
         })
-    }
-
-    public async initialize(): Promise<void> {
-        try {
-            await this.dataSource.initialize();
-            console.log('Database connection established');
-            await seed(this.dataSource);
-        } catch (error) {
-            console.error('Database connection failed:', error);
-            throw error;
-        }
     }
 
     public listen(port: number): void {
