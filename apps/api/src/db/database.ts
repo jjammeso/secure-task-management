@@ -45,9 +45,9 @@ const usersData = [
     { firstName: 'Jack', lastName: 'Martinez', email: 'jack@email.com', role: Role.VIEWER, orgName: 'Safety' },
 ];
 
-export async function seed() {
-    const orgRepo = AppDataSource.getRepository(Organization);
-    const userRepo = AppDataSource.getRepository(User);
+export async function seed(appDataSource: DataSource) {
+    const orgRepo = appDataSource.getRepository(Organization);
+    const userRepo = appDataSource.getRepository(User);
 
     // Check if tables are empty - corrected syntax
     const orgCount = await orgRepo.count();
