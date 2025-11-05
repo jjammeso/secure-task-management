@@ -84,27 +84,27 @@ describe('RBAC Service', () => {
 
     const allOrgs = [
         // Parent organizations (Level 1)
-        { id: '1', name: 'Org-1', ownerId: '1', createdAt: new Date(), updatedAt: new Date() },
-        { id: '2', name: 'Org-2', ownerId: '1', createdAt: new Date(), updatedAt: new Date() },
+        { id: 'org-1', name: 'Org-1', ownerId: '1', createdAt: new Date(), updatedAt: new Date() },
+        { id: 'org-2', name: 'Org-2', ownerId: '1', createdAt: new Date(), updatedAt: new Date() },
 
         // Child organizations (Level 2)
-        { id: '3', name: 'Org-3', ownerId: '1', parentId: '1', createdAt: new Date(), updatedAt: new Date() },
-        { id: '4', name: 'Org-4', ownerId: '1', parentId: '2', createdAt: new Date(), updatedAt: new Date() },
-        { id: '5', name: 'Org-5', ownerId: '1', parentId: '1', createdAt: new Date(), updatedAt: new Date() },
+        { id: 'org-3', name: 'Org-3', ownerId: '1', parentId: 'org-1', createdAt: new Date(), updatedAt: new Date() },
+        { id: 'org-4', name: 'Org-4', ownerId: '1', parentId: 'org-2', createdAt: new Date(), updatedAt: new Date() },
+        { id: 'org-5', name: 'Org-5', ownerId: '1', parentId: 'org-1', createdAt: new Date(), updatedAt: new Date() },
     ];
 
 
     describe('canAccessOrganization', () => {
         it('should allow access to same organization', () => {
-            expect(rbacService.canAccessOrganization(viewerUser.id, '1', allOrgs)).toBe(true);
+            expect(rbacService.canAccessOrganization(viewerUser.organizationId, 'org-1', allOrgs)).toBe(true);
         })
 
         it('should allow access to child organization', () => {
-            expect(rbacService.canAccessOrganization('1', '3', allOrgs)).toBe(true);
+            expect(rbacService.canAccessOrganization('org-1', 'org-3', allOrgs)).toBe(true);
         })
 
         it('should deny access to different organization', () => {
-            expect(rbacService.canAccessOrganization('1', '4', allOrgs)).toBe(false);
+            expect(rbacService.canAccessOrganization('org-1', 'org-4', allOrgs)).toBe(false);
         });
     })
 })

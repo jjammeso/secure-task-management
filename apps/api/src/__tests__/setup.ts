@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { User, Organization, Task, AuditLog } from "../entities";
-import { AppDataSource, seed } from "../db/database";
+import { seed } from "../db/database";
 
 export let testDataSource: DataSource;
 
@@ -21,6 +21,8 @@ afterAll(async () =>{
 })
 
 beforeEach(async ()=>{
+    await testDataSource.query('PRAGMA foreign_keys = OFF;');
+
     const entities = testDataSource.entityMetadatas;
 
     for(const entity of entities){
