@@ -3,7 +3,9 @@ import { AuditLog, Organization, Task, User } from "../entities";
 import { Role } from "@myorg/data";
 import * as bcrypt from 'bcrypt';
 
-export const AppDataSource = new DataSource({
+export let AppDataSource:DataSource;
+
+export const dataSource = new DataSource({
     type: "sqlite",
     database: process.env.NODE_ENV === 'test' ? ':memory' : 'database.sqlite',
     synchronize: true,
@@ -13,6 +15,16 @@ export const AppDataSource = new DataSource({
     subscribers: ['src/subscribers/**/*.ts'],
 })
 
+export const setDataSource = (dSrc:DataSource)=>{
+    AppDataSource = dSrc;
+}
+
+export const getDataSource = ():DataSource=>{
+    if(!AppDataSource){
+        setDataSource(dataSource);
+    }
+    return AppDataSource;
+}
 
 
 //Populate database with organization and some users

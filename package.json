@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build:libs": "npm --workspace @myorg/data run build && npm --workspace @myorg/auth run build",
+    "test:api":"npm --workspace api run test",
     "dev:api": "npm --workspace api run dev",
     "dev:dashboard": "npm --workspace dashboard run dev",
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:dashboard\""
