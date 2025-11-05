@@ -1,5 +1,5 @@
 import App from "./app";
-import { AppDataSource } from "./db/database";
+import { AppDataSource, getDataSource, setDataSource } from "./db/database";
 import { seed } from "./db/database";
 import dotenv from 'dotenv';
 import path from 'path'
@@ -13,9 +13,11 @@ const IS_TEST = NODE_ENV === 'test';
 
 console.log(`🌍 Environment: ${NODE_ENV}`);
 
-AppDataSource.initialize()
+const dataSource = getDataSource();
+
+dataSource.initialize()
     .then(async () => {
         const app = new App();
-        await seed(AppDataSource);
+        await seed(dataSource);
         app.listen(PORT);
     }).catch(error => console.error("Error during Data Source initialization:", error));

@@ -20,17 +20,6 @@ afterAll(async () =>{
     await testDataSource.destroy();
 })
 
-beforeEach(async ()=>{
-    await testDataSource.query('PRAGMA foreign_keys = OFF;');
-
-    const entities = testDataSource.entityMetadatas;
-
-    for(const entity of entities){
-        const repository = testDataSource.getRepository(entity.name);
-        await repository.clear();
-    }
-})
-
 it('setup file dummy test', () => {
   expect(true).toBe(true);
 });

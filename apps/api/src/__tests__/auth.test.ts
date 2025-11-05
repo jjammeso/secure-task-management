@@ -3,12 +3,15 @@ import App from '../app';
 import { User, Organization } from '../entities';
 import { Role } from '@myorg/data';
 import { jwtService } from '@myorg/auth';
+import { setDataSource } from '../db/database';
+import { testDataSource } from './setup';
 
 describe('Authentication', () => {
     let app: App;
 
     beforeAll(async () => {
         app = new App();
+        setDataSource(testDataSource);
     })
 
     describe('POST /api/auth/login', () => {
@@ -17,7 +20,7 @@ describe('Authentication', () => {
             const response = await request(app.app).post('/api/auth/login')
             .send({
                 email: 'alice@email.com',
-                password:'Alice123'
+                password: 'Alice123'
             })
             .expect(200);
 
@@ -28,7 +31,7 @@ describe('Authentication', () => {
 
 
 
-        it('should not login with invalid credentials', async ()=>{
+        it('should not login with invalid password', async ()=>{
             const response = await request(app.app)
             .post('/api/auth/login')
             .send({
@@ -38,7 +41,20 @@ describe('Authentication', () => {
             .expect(401);
 
             expect(response.body.success).toBe(false);
-            expect(response.body.error).toBe('Invalid credentials');
+            expect(response.body.error).toBe('Invalid password');
+        })
+
+         it('should not login with invalid email', async ()=>{
+            const response = await request(app.app)
+            .post('/api/auth/login')
+            .send({
+                email: 'alice@wrongemail.com',
+                password: 'Alice123'
+            })
+            .expect(401);
+
+            expect(response.body.success).toBe(false);
+            expect(response.body.error).toBe('No user with this email');
         })
     })
 })
