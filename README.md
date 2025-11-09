@@ -124,6 +124,15 @@ npm run dev
 # App runs on http://localhost:3000
 ```
 
+### Production Build
+
+```bash
+npm ci
+npm run build
+npm start
+```
+
+
 ## 📚 API Documentation
 
 ### Authentication Endpoints
@@ -183,6 +192,29 @@ curl -X PUT http://localhost:5000/api/tasks/task-id \
 curl -X DELETE http://localhost:5000/api/tasks/task-id \
   -H "Authorization: Bearer <token>"
 ```
+
+## 🧪 Testing
+
+### Backend Tests
+
+```bash
+cd apps/api
+
+# Run all tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# Coverage report
+npm run test:coverage
+```
+
+**Test Coverage:**
+- RBAC permission checks
+- Authentication flow
+- Authorization scenarios
+- Error handling
 
 
 
