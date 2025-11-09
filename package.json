@@ -10,11 +10,14 @@
     "libs/*"
   ],
   "scripts": {
-    "build:libs": "npm --workspace @myorg/data run build && npm --workspace @myorg/auth run build",
+    "build": "tsc -b",
     "test:api":"npm --workspace api run test",
     "dev:api": "npm --workspace api run dev",
     "dev:dashboard": "npm --workspace dashboard run dev",
-    "dev": "concurrently \"npm run dev:api\" \"npm run dev:dashboard\""
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:dashboard\"",
+    "start:api":"npm --workspace api run start",
+    "start:dashboard":"npm --workspace dashboard run start",
+    "start": "concurrently \"npm start:api\" \"npm start:dashboard\""
   },
   "repository": {
     "type": "git",

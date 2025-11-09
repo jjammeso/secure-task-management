@@ -6,7 +6,9 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "jest",
-    "dev": "ts-node-dev -r tsconfig-paths/register --respawn src/index.ts"
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn src/index.ts",
+    "build": "tsc -b",
+    "start": "node ../../dist/apps/api/src/index.js"
   },
   "author": "",
   "license": "ISC",
