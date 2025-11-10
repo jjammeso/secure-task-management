@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,11 +23,33 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@myorg/data": ["../../libs/data/src"],
-  "@myorg/auth": ["../../libs/auth/src"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@myorg/data": [
+        "../../libs/data/src"
+      ],
+      "@myorg/auth": [
+        "../../libs/auth/src"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../libs/**/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../../libs/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "references": [
+    {
+      "path": "../../libs/data"
+    },
+    {
+      "path": "../../libs/auth"
+    }
+  ]
 }

@@ -8,7 +8,7 @@
     "test": "jest",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn src/index.ts",
     "build": "tsc -b",
-    "start": "node ../../dist/apps/api/src/index.js"
+    "start": "node ../../dist/apps/api/index.js"
   },
   "author": "",
   "license": "ISC",

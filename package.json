@@ -10,14 +10,17 @@
     "libs/*"
   ],
   "scripts": {
-    "build": "tsc -b",
-    "test:api":"npm --workspace api run test",
+    "build": "npm run build:libs && npm run build:api && npm run build:dashboard",
+    "build:api": "npm --workspace api run build",
+    "build:dashboard": "npm --workspace dashboard run build",
+    "build:libs": "tsc -b libs/data libs/auth",
+    "test:api": "npm --workspace api run test",
     "dev:api": "npm --workspace api run dev",
     "dev:dashboard": "npm --workspace dashboard run dev",
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:dashboard\"",
-    "start:api":"npm --workspace api run start",
-    "start:dashboard":"npm --workspace dashboard run start",
-    "start": "concurrently \"npm start:api\" \"npm start:dashboard\""
+    "start:api": "npm --workspace api run start",
+    "start:dashboard": "npm --workspace dashboard run start",
+    "start": "concurrently \"npm run start:api\" \"npm run start:dashboard\""
   },
   "repository": {
     "type": "git",

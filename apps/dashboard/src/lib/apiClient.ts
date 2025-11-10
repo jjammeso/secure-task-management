@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ApiResponse } from '@myorg/data';
 
 class ApiClient {
@@ -64,17 +64,20 @@ class ApiClient {
   private async request<T>(config: AxiosRequestConfig): Promise<T> {
     try {
       const response: AxiosResponse<ApiResponse<T>> = await this.client.request(config);
-      
+
       if (!response.data.success) {
         throw new Error(response.data.error || 'Request failed');
       }
-      
+
       return response.data.data as T;
-    } catch (error: any) {
-      if (error.response?.data?.error) {
-        throw new Error(error.response.data.error);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const axiosErr = err as AxiosError<ApiResponse<T>>;
+        if (axiosErr.response?.data?.error) {
+          throw new Error(axiosErr.response.data.error);
+        }
       }
-      throw error;
+      throw err;
     }
   }
 
@@ -83,11 +86,11 @@ class ApiClient {
     return this.request<T>({ ...config, method: 'GET', url });
   }
 
-  public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  public async post<T, TData = unknown>(url: string, data?: TData, config?: AxiosRequestConfig): Promise<T> {
     return this.request<T>({ ...config, method: 'POST', url, data });
   }
 
-  public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  public async put<T, TData = unknown>(url: string, data?: TData, config?: AxiosRequestConfig): Promise<T> {
     return this.request<T>({ ...config, method: 'PUT', url, data });
   }
 

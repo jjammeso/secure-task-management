@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
 interface TasksResponse {
-   tasks:any[];
+   tasks:Task[];
    total: number;
    page: number;
    limit: number;

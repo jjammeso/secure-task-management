@@ -4,8 +4,13 @@
     "composite": true,
     "declaration": true,
     "rootDir": "src",
-    "outDir": "../../dist/libs/data"
+    "outDir": "../../dist/libs/data",
+    "tsBuildInfoFile": "../../dist/libs/data/.tsbuildinfo"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["**/*.spec.ts"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts"
+  ]
 }

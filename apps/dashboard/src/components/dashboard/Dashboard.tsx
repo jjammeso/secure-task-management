@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Task, TaskStatus, TaskCategory } from '@myorg/data';
+import { Task, TaskStatus, TaskCategory, CreateTaskDto, UpdateTaskDto } from '@myorg/data';
 import { useTask } from '@/hooks/useTask';
 import { useAuth } from '@/contexts/AuthContext';
 import { rbacService, Permission } from '@myorg/auth';
@@ -57,7 +57,7 @@ export const Dashboard: React.FC = () => {
   const canDeleteTask = !!(user && rbacService.hasPermission(user.role, Permission.DELETE_TASK));
 
   // Handlers
-  const handleCreateTask = async (data: any) => {
+  const handleCreateTask = async (data: CreateTaskDto): Promise<void> => {
     try {
       await createTask.mutateAsync(data);
       setTaskModal({ isOpen: false, mode: 'create' });
@@ -66,7 +66,7 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  const handleUpdateTask = async (data: any) => {
+  const handleUpdateTask = async (data: UpdateTaskDto): Promise<void> => {
     try {
       if (!taskModal.task) return;
       await updateTask.mutateAsync({
@@ -235,7 +235,13 @@ export const Dashboard: React.FC = () => {
             <div className="p-6">
               <TaskForm
                 task={taskModal.task}
-                onSubmit={taskModal.mode === 'create' ? handleCreateTask : handleUpdateTask}
+                onSubmit={async (data: CreateTaskDto | UpdateTaskDto) => {
+                  if (taskModal.mode === 'create') {
+                    await handleCreateTask(data as CreateTaskDto);
+                  } else {
+                    await handleUpdateTask(data as UpdateTaskDto);
+                  }
+                }}
                 isLoading={createTask.isPending || updateTask.isPending}
                 onCancel={() => setTaskModal({ isOpen: false, mode: 'create' })}
               />
