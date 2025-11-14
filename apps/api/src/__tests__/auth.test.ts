@@ -1,8 +1,5 @@
 import request from 'supertest';
 import App from '../app';
-import { User, Organization } from '../entities';
-import { Role } from '@myorg/data';
-import { jwtService } from '@myorg/auth';
 import { setDataSource } from '../db/database';
 import { testDataSource } from './setup';
 

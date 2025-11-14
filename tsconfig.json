@@ -9,10 +9,6 @@
   "compilerOptions": {
     // Paths
     "baseUrl": ".",
-    "paths": {
-      "@myorg/data": ["libs/data/src/index.ts"],
-      "@myorg/auth": ["libs/auth/src/index.ts"],
-    },
 
     // Core
     "target": "es2020",
