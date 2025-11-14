@@ -4,10 +4,15 @@
     "outDir": "../../dist/apps/api",
     "rootDir": "src",
     "module": "commonjs",
+     "baseUrl": "../..",  // ← Add this
+    "paths": {           // ← Add this
+      "@myorg/data": ["libs/data/src/index.ts"],
+      "@myorg/auth": ["libs/auth/src/index.ts"]
+    },
     "types": [
       "node",
       "jest"
-    ], // ← ADD "jest" here
+    ]
   },
   "include": [
     "src/**/*"
