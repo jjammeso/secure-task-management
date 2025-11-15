@@ -4,18 +4,12 @@
     "composite": true,
     "declaration": true,
     "rootDir": "src",
-    "outDir": "../../dist/libs/auth",
-    "tsBuildInfoFile": "../../dist/libs/auth/.tsbuildinfo"
+    "outDir": "dist",
   },
   "include": [
     "src/**/*.ts"
   ],
   "exclude": [
     "**/*.spec.ts"
-  ],
-  "references": [
-    {
-      "path": "../data"
-    }
   ]
 }

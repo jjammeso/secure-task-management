@@ -1,41 +1,50 @@
 {
   "files": [],
   "references": [
-    { "path": "./apps/api" },
-    { "path": "./libs/data" },
-    {"path": "./libs/auth"},
-    {"path":"./apps/dashboard"}
+    {
+      "path": "./apps/api"
+    },
+    {
+      "path": "./libs/data"
+    },
+    {
+      "path": "./libs/auth"
+    },
+    {
+      "path": "./apps/dashboard"
+    }
   ],
   "compilerOptions": {
     // Paths
     "baseUrl": ".",
     "paths": {
-      "@myorg/data": ["libs/data/src/index.ts"],
-      "@myorg/auth": ["libs/auth/src/index.ts"],
+      "@myorg/data": [
+        "libs/data"
+      ],
+      "@myorg/auth": [
+        "libs/auth"
+      ]
     },
-
     // Core
     "target": "es2020",
     "module": "commonjs",
     "moduleResolution": "node",
-
     // Outputs
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "skipLibCheck": true,
-
     // Strictness
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-
     // Decorators (for Nest/TypeORM/Express metadata)
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-
     // Node types
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   }
 }
