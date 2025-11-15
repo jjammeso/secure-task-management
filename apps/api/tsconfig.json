@@ -1,14 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/apps/api",
+    "outDir": "dist",
     "rootDir": "src",
     "module": "commonjs",
      "baseUrl": "../..",  // ← Add this
-    "paths": {           // ← Add this
-      "@myorg/data": ["libs/data/src/index.ts"],
-      "@myorg/auth": ["libs/auth/src/index.ts"]
-    },
     "types": [
       "node",
       "jest"
@@ -20,13 +16,5 @@
   "exclude": [
     "node_modules",
     "dist"
-  ],
-  "references": [
-    {
-      "path": "../../libs/data"
-    },
-    {
-      "path": "../../libs/auth"
-    }
   ]
 }
