@@ -1,4 +1,4 @@
-import { Role, TaskStatus, TaskCategory } from "./enums";
+import { Role, TaskStatus, TaskCategory } from "@myorg/data"
 
 export interface User {
     id: string;
