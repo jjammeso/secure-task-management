@@ -3,6 +3,7 @@ import { Router, Response } from "express";
 import { AppDataSource } from "../db/database";
 import { User } from "../entities";
 import { jwtService } from "@myorg/auth";
+
 import { AuthenticatedRequest, authenticateJWT } from "../middleware/auth.middleware";
 
 const authRouter = Router();

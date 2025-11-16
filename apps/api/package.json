@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "type": "commonjs",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": true,
   "scripts": {
     "test": "jest",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn src/index.ts",

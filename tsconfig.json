@@ -2,16 +2,16 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/api"
+      "path": "libs/data"
     },
     {
-      "path": "./libs/data"
+      "path": "libs/auth"
     },
     {
-      "path": "./libs/auth"
+      "path": "apps/api"
     },
     {
-      "path": "./apps/dashboard"
+      "path": "apps/dashboard"
     }
   ],
   "compilerOptions": {
@@ -19,10 +19,10 @@
     "baseUrl": ".",
     "paths": {
       "@myorg/data": [
-        "libs/data"
+        "libs/data/src/index.ts"
       ],
       "@myorg/auth": [
-        "libs/auth"
+        "libs/auth/src"
       ]
     },
     // Core
