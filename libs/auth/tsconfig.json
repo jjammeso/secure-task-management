@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
-    "rootDir": "src",
+    "module": "commonjs",
     "outDir": "dist",
   },
   "include": [
@@ -11,5 +11,8 @@
   ],
   "exclude": [
     "**/*.spec.ts"
-  ]
+  ],
+  "references": [{
+    "path": "../data"
+  }]
 }

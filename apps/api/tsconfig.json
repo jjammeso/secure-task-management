@@ -2,19 +2,20 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
     "module": "commonjs",
-     "baseUrl": "../..",  // ← Add this
-    "types": [
-      "node",
-      "jest"
-    ]
+    "types": ["jest", "node"]
   },
+
   "include": [
+    "jest.config.ts",
     "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist"
+  ],
+  "references": [
+    {"path": "../../libs/data"},
+    {"path": "../../libs/auth"}
   ]
 }
