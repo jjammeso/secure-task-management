@@ -1,12 +1,34 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 //Import routes
 import taskRoutes from './routes/taskRoute';
 import authRoutes from './routes/authRoutes';
 import auditRoutes from './routes/auditRoutes';
 import userRoutes from './routes/userRoutes';
 
+
+//Rate limiter
+
+
+const authLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max:20,
+    message: { success: false, error: "Too many requests!" }
+});
+
+const taskLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 200,
+    message: {success:false, error: "Too many operations!"}
+});
+
+const auditLimiter = rateLimit({
+    windowMs: 30 * 60 * 1000,
+    max: 50,
+    message: {success:false, error: "Too many requests!"}
+});
 
 class App {
     public app: express.Application;
@@ -36,10 +58,10 @@ class App {
 
     private initializeRoutes(): void {
         //Routes
-        this.app.use('/api/tasks', taskRoutes);
-        this.app.use('/api/auth', authRoutes);
-        this.app.use('/api/audit-log', auditRoutes);
-        this.app.use('/api/users', userRoutes);
+        this.app.use('/api/tasks', taskLimiter, taskRoutes);
+        this.app.use('/api/auth', authLimiter, authRoutes);
+        this.app.use('/api/audit-log', auditLimiter, auditRoutes);
+        this.app.use('/api/users', taskLimiter, userRoutes);
 
         //Global error handler
         this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
